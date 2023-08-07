@@ -571,24 +571,6 @@ public class CommUtils {
 		return false;
 	}
 	
-	/**
-	 * 返回含有括号的所有的可能
-	 */
-	public static List<String> kindOfEntnames(String entname) {
-		List<String> entnames = new ArrayList<String>();
-		entnames.add(entname);
-		if (isContinesParentheses(entname)) {
-			String chinaEntname = entname.replace("(", "（").replace(")", "）");
-			String chinaEntname1 = entname.replace("(", "（").replace("）", ")");
-			String englishEntName = entname.replace("（", "(").replace("）", ")");
-			String englishEntName1 = entname.replace("（", "(").replace(")", "）");
-			entnames.add(chinaEntname);
-			entnames.add(chinaEntname1);
-			entnames.add(englishEntName1);
-			entnames.add(englishEntName);
-		}
-		return entnames;
-	}
 
 	
 	public static String getEaryMonth(int i) {
@@ -599,28 +581,6 @@ public class CommUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(calendar.getTime());
 	}
-	/**
-	 * 以key:values 方式将csIdList的数据保证在blackList中,其中 key为keyPoint的值，values 为list 内容，如果是多条，使用“,”分隔
-	 * 类似 keyPoint:str1,str2,str3
-	 * @param csidList
-	 * @param blackList
-	 * @param keyPoint
-	 */
-	public static void saveRules(List<String> csidList, Map<String, Object> blackList,String keyPoint){
-		try{
-			if(!CommUtils.isEmptyList(csidList)){
-				StringBuilder csidInfo=new StringBuilder("");
-				for(String str:csidList){
-					csidInfo=csidInfo.append(str).append(",");
-				}
-				String s=csidInfo.toString();
-				blackList.put(keyPoint,s.substring(0,s.length()-1));
-			}
-		}catch(Exception e){
-			
-		}
-	}
-
     /**
      * 去除List中重复数据
      * @param list

@@ -8,8 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -32,33 +33,57 @@ public class MainService {
     }
 
     //@Scheduled(cron = "${modelCronExpr}")
-    public void process(){
+    public void process() throws IOException {
         log.info("每20秒执行一次!");
+        String date = CommUtils.getDate(0).replace("-", "");
+        //文件路径
+        String filePath = "./hxData/output/" + date + "/result.csv";
+        File fileName = getFile(date, filePath);
+        if (fileName == null) return;
         List<Map<String, Object>> todoList= hyDao.queryForList("mapping/hshy", "common.queryTodoListInfo", null);
         ListIterator<Map<String, Object>> iterator = todoList.listIterator();
         String entname = "";
         String serialno = "";
+        BufferedWriter bufferwriter;
+        bufferwriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()),
+                StandardCharsets.UTF_8));
         while (iterator.hasNext()) {
-            try{
+            try {
                 Map<String, Object> entInfo = iterator.next();
                 entname = (String) entInfo.get("nsrmc");
                 log.info("【检索到需要处理的企业为{}】", entname);
                 serialno = (String) entInfo.get("serialno");
-                String 	nsrsbh=(String) entInfo.get("nsrsbh");
+                String nsrsbh = (String) entInfo.get("nsrsbh");
 
                 //加工指标
                 Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh);
                 //处理结果
 
-                Map<String, Object> resultMap =getModelRule(modelMap,entInfo);
+                Map<String, Object> resultMap = getModelRule(modelMap, entInfo);
                 resultMap.putAll(entInfo);
                 hyDao.insert("mapping/hshy", "common.insertHsyhTransLog", resultMap);
                 //入库
-            }catch (Exception e){
+                //写文件中
+                StringBuilder stringBuffer = new StringBuilder();
+                stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score"));
+                log.info("数据为:{}", stringBuffer);
+                bufferwriter.write(stringBuffer.toString());
+                bufferwriter.newLine();
+
+
+            } catch (Exception e) {
                 saveExceptionInfo(entname, serialno, e);
-            }finally {
-                log.info("企业{}处理完毕!】",entname);
+            } finally {
+                // 关闭流
+                log.info("企业{}处理完毕!】", entname);
             }
+        }
+        bufferwriter.newLine();
+        log.info("文件写入成功");
+        String successFlag = "./hxData/output/" + date + "/success.csv";
+        File fileSuccess = new File(successFlag);
+        if (fileSuccess.createNewFile()) {
+            log.info("标志文件创建成功！");
         }
     }
 
@@ -296,7 +321,30 @@ public class MainService {
         resultMap.put("status", "1");
         return resultMap;
     }
-
+    private File getFile(String date, String filePath) throws IOException {
+        log.info("当前日期为:{},文件名为:{}", date, filePath);
+        File fileName = new File(filePath);
+        if(fileName.exists()) {
+            log.info("创建单个文件{}失败，目标文件已存在！", filePath);
+            return null;
+        }
+        if (filePath.endsWith(File.separator)) {
+            log.info("创建单个文件{}失败，目标文件不能为目录!", filePath);
+            return null;
+        }
+        if(!fileName.getParentFile().exists()) {
+            //如果目标文件所在的目录不存在，则创建父目录
+            log.info("目标文件所在目录不存在，准备创建它！");
+            if(!fileName.getParentFile().mkdirs()) {
+                log.info("创建目标文件所在目录失败！");
+                return null;
+            }
+        }
+        if (fileName.createNewFile()) {
+            log.info("文件创建成功！");
+        }
+        return fileName;
+    }
     public void saveExceptionInfo(String entname, String serialno, Exception e) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         e.printStackTrace(new PrintStream(baos));

@@ -31,27 +31,8 @@ public class ExportDataService {
         String date = CommUtils.getDate(0).replace("-", "");
         //文件路径
         String filePath = "./hxData/output/" + date + "/result.csv";
-        log.info("当前日期为:{},文件名为:{}", date, filePath);
-        File fileName = new File(filePath);
-        if(fileName.exists()) {
-            log.info("创建单个文件{}失败，目标文件已存在！",filePath);
-            return ;
-        }
-        if (filePath.endsWith(File.separator)) {
-            log.info("创建单个文件{}失败，目标文件不能为目录!",filePath);
-            return ;
-        }
-        if(!fileName.getParentFile().exists()) {
-            //如果目标文件所在的目录不存在，则创建父目录
-            log.info("目标文件所在目录不存在，准备创建它！");
-            if(!fileName.getParentFile().mkdirs()) {
-                log.info("创建目标文件所在目录失败！");
-                return ;
-            }
-        }
-        if (fileName.createNewFile()) {
-            log.info("文件创建成功！");
-        }
+        File fileName = getFile(date, filePath);
+        if (fileName == null) return;
         BufferedWriter bufferwriter;
         bufferwriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()), StandardCharsets.UTF_8));
         int count = hyDao.queryForInt("mapping/hshy", "common.queryResultCount", date);
@@ -76,5 +57,30 @@ public class ExportDataService {
             }
         }
 
+    }
+
+    private File getFile(String date, String filePath) throws IOException {
+        log.info("当前日期为:{},文件名为:{}", date, filePath);
+        File fileName = new File(filePath);
+        if(fileName.exists()) {
+            log.info("创建单个文件{}失败，目标文件已存在！", filePath);
+            return null;
+        }
+        if (filePath.endsWith(File.separator)) {
+            log.info("创建单个文件{}失败，目标文件不能为目录!", filePath);
+            return null;
+        }
+        if(!fileName.getParentFile().exists()) {
+            //如果目标文件所在的目录不存在，则创建父目录
+            log.info("目标文件所在目录不存在，准备创建它！");
+            if(!fileName.getParentFile().mkdirs()) {
+                log.info("创建目标文件所在目录失败！");
+                return null;
+            }
+        }
+        if (fileName.createNewFile()) {
+            log.info("文件创建成功！");
+        }
+        return fileName;
     }
 }
