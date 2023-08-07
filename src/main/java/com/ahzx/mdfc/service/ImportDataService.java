@@ -26,7 +26,7 @@ public class ImportDataService {
 	public ImportDataService(HyDaoImpl hyDao) {
 		this.hyDao = hyDao;
 	}
-	//@Scheduled(cron = "${modelCronExpr}")
+	//@Scheduled(cron = "${importCronExpr}")
 	public void importData(){
 		BufferedReader br = null;
 		List<Map<String, Object>> requstList = new ArrayList<Map<String, Object>>();

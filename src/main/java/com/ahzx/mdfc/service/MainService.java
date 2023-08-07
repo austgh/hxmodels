@@ -6,6 +6,7 @@ import com.ahzx.mdfc.model.IndexManageModel;
 import com.ahzx.mdfc.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -32,7 +33,7 @@ public class MainService {
         this.indexManageModel = indexManageModel;
     }
 
-    //@Scheduled(cron = "${modelCronExpr}")
+    @Scheduled(cron = "${modelCronExpr}")
     public void process() throws IOException {
         log.info("每20秒执行一次!");
         String date = CommUtils.getDate(0).replace("-", "");
@@ -40,7 +41,7 @@ public class MainService {
         String filePath = "./hxData/output/" + date + "/result.csv";
         File fileName = getFile(date, filePath);
         if (fileName == null) return;
-        List<Map<String, Object>> todoList= hyDao.queryForList("mapping/hshy", "common.queryTodoListInfo", null);
+        List<Map<String, Object>> todoList= hyDao.queryForList("hsyh", "common.queryTodoListInfo", null);
         ListIterator<Map<String, Object>> iterator = todoList.listIterator();
         String entname = "";
         String serialno = "";
@@ -58,10 +59,11 @@ public class MainService {
                 //加工指标
                 Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh);
                 //处理结果
-
+                log.info("{}指标加工结果:{}",entname,modelMap);
                 Map<String, Object> resultMap = getModelRule(modelMap, entInfo);
                 resultMap.putAll(entInfo);
-                hyDao.insert("mapping/hshy", "common.insertHsyhTransLog", resultMap);
+                resultMap.put("batchdate", date);
+                hyDao.insert("hsyh", "common.insertHsyhTransLog", resultMap);
                 //入库
                 //写文件中
                 StringBuilder stringBuffer = new StringBuilder();
@@ -69,8 +71,6 @@ public class MainService {
                 log.info("数据为:{}", stringBuffer);
                 bufferwriter.write(stringBuffer.toString());
                 bufferwriter.newLine();
-
-
             } catch (Exception e) {
                 saveExceptionInfo(entname, serialno, e);
             } finally {
@@ -79,6 +79,7 @@ public class MainService {
             }
         }
         bufferwriter.newLine();
+        bufferwriter.close();
         log.info("文件写入成功");
         String successFlag = "./hxData/output/" + date + "/success.csv";
         File fileSuccess = new File(successFlag);
@@ -337,7 +338,6 @@ public class MainService {
             log.info("目标文件所在目录不存在，准备创建它！");
             if(!fileName.getParentFile().mkdirs()) {
                 log.info("创建目标文件所在目录失败！");
-                return null;
             }
         }
         if (fileName.createNewFile()) {
@@ -356,6 +356,6 @@ public class MainService {
         msg.put("serialno", serialno);
         msg.put("msg", exception);
         msg.put("inputtime", CommUtils.getDate());
-        hyDao.insert("mapping/hshy", "common.saveExceptionInfo", msg);
+        hyDao.insert("hsyh", "common.saveExceptionInfo", msg);
     }
 }

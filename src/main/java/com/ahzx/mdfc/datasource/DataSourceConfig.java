@@ -30,7 +30,7 @@ public class DataSourceConfig {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setDataSource(datasource);
 		bean.setMapperLocations(
-				new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/hshy/*.xml"));
+				new PathMatchingResourcePatternResolver().getResources("classpath*:*Mapper.xml"));
 		return bean.getObject();
 	}
 

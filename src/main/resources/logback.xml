@@ -65,7 +65,8 @@
 
     <logger name="common" level="debug"/>
     <logger name="hangxinTax" level="debug"/>
-
+    <logger name="commonMapper" level="debug"/>
+    <logger name="hangxinTaxMapper" level="debug"/>
 
     <root level="info">
         <appender-ref ref="console" />

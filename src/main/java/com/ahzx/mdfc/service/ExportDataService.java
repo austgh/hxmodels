@@ -4,10 +4,12 @@ import com.ahzx.mdfc.dao.hshy.HyDaoImpl;
 import com.ahzx.mdfc.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -26,7 +28,7 @@ public class ExportDataService {
         this.hyDao = hyDao;
     }
 
-    @Scheduled(cron = "${exportCronExpr}")
+    //@Scheduled(cron = "${exportCronExpr}")
     public void exportData() throws Exception {
         String date = CommUtils.getDate(0).replace("-", "");
         //文件路径

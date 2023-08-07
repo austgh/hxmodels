@@ -140,35 +140,7 @@ public class CommUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(calendar.getTime());
 	}
-	
-	/**
-	 *计算两时间的相差月份（向下取整） 
-	 * @param endDate 截止时间
-	 * @param beginDate 起始时间 
-	 * */
-	public static int monthsBetweenCeil(Date endDate,Date beginDate){
-		Calendar calendar=Calendar.getInstance();
-		calendar.setTime(new Date());
-		int endDateyear=calendar.get(calendar.YEAR);
-		int endDatemonth=calendar.get(calendar.MONTH);
-		int endDataDay=calendar.get(calendar.DATE);
-		int DaysOfThisMoths=calendar.getActualMaximum(calendar.DAY_OF_MONTH);
-		System.out.println(DaysOfThisMoths);
-		calendar.setTime(beginDate);
-		int beginDateyear=calendar.get(calendar.YEAR);
-		int beginDatemonth=calendar.get(calendar.MONTH);
-		int beginDataDay=calendar.get(calendar.DATE);
-		int montsBeteen=endDatemonth-beginDatemonth;
-		int yearsBetween=(endDateyear-beginDateyear)*12;
-		int days=endDataDay-beginDataDay;
-		int baseMonths=yearsBetween+montsBeteen;
-		if(days>0){
-			return baseMonths+1;
-		}else{
-			return baseMonths;
-		}
-	}
-	
+
 	/**
 	 * 日期格式字符串转换成时间戳
 	 * @param date_str 字符串日期
@@ -192,46 +164,7 @@ public class CommUtils {
 		Date date = new Date(timestamp);
 		return sdf.format(date);
 	}
-	
-	
-	/**
-	 * 根据月份集合，验证是否有连续的三个月
-	 * @return
-	 */
-	public static boolean validContinuousNums(List<Map<String, Object>> list, String cloumn){
-		Set<Integer> set = getMonthsFromDate(list, cloumn);
-		boolean flag = false;
-		Iterator<Integer> iterator = set.iterator();
-		while(iterator.hasNext()){
-			int value = iterator.next();
-			
-//			if (value ==2 && set.contains(12) && set.contains(1)&&set.contains(11) ) {
-//				flag = true;
-//				break;
-//			}
-		
-			if (value ==3 && set.contains(4) && set.contains(5)&&set.contains(6) ) {
-				flag = true;
-				break;
-			}
-			
-			if (value == 12 && set.contains(11) && set.contains(1)) {
-				flag = true;
-				break;
-			}
-			if (value == 1 && set.contains(12) && set.contains(11)) {
-				flag = true;
-				break;
-			}
-			if (value != 1  && value != 3 && value != 12 && set.contains(value - 1) && set.contains(value + 1)) {
-				flag = true;
-				break;
-			}
-			continue;
-		}
-		return flag;
-	}
-	
+
 	/**
 	 * 从日期中抽取月份
 	 * @param list
