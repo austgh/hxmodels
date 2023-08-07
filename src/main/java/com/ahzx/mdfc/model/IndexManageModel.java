@@ -51,8 +51,8 @@ public class IndexManageModel {
 			modelMap.put("interTaxSale",hangxinTaxindexLib.interTaxSale(nsrsbh,date));
 			modelMap.put("mainBusDownlast",hangxinTaxindexLib.mainBusDownnow(nsrsbh,date,23));
 			modelMap.put("mainBusDownnow",hangxinTaxindexLib.mainBusDownnow(nsrsbh,date,11));
-			modelMap.put("befLasYearTax",hangxinTaxindexLib.befLasYearTax(nsrsbh,date,23));
-			modelMap.put("lastYearTax",hangxinTaxindexLib.befLasYearTax(nsrsbh,date,11));
+			modelMap.put("befLasYearTax",hangxinTaxindexLib.lastYearTax(nsrsbh,date,23));
+			modelMap.put("lastYearTax",hangxinTaxindexLib.lastYearTax(nsrsbh,date,11));
 			modelMap.put("YSXSRLast",hangxinTaxindexLib.YSXSRLast(nsrsbh,date,11));
 			modelMap.put("YSXSRBef",hangxinTaxindexLib.YSXSRLast(nsrsbh,date,23));
 			modelMap.put("YSXSE12M",hangxinTaxindexLib.YSXSE12M(nsrsbh,date,11));
