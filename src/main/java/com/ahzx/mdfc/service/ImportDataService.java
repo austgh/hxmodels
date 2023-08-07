@@ -47,7 +47,7 @@ public class ImportDataService {
 			while ((readLine = br.readLine()) != null) {
 				total++;
 				log.info("第{}行数据为:{}", total, readLine);
-				String[] params = readLine.split(",");
+				String[] params = readLine.split(";");
 				if (CommUtils.isEmptyStr(params[2]) || CommUtils.isEmptyStr(params[1])
 						|| CommUtils.isEmptyStr(params[0])) {
 					continue;
