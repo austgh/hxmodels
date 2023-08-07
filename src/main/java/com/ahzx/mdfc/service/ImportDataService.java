@@ -61,6 +61,7 @@ public class ImportDataService {
 				map.put("hytypecode",  params[5]);
 				map.put("xedoldcust", params[6]);
 				map.put("inputtime", CommUtils.getDate());
+				map.put("batchdate", date);
 				if(total<=5000){
 					requstList.add(map);
 					hyDao.insert("mapping/hshy", "common.insertData", map);
