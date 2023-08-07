@@ -90,7 +90,7 @@
 
 	<insert id="insertData" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,inputtime)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime)
 		values
 		(	#{serialno},
 			#{nsrmc},
@@ -99,6 +99,7 @@
 			#{hytype},
 			#{hytypecode},
 			#{xedoldcust},
+			#{batchdate},
 			#{inputtime})
 	</insert>
 
@@ -130,13 +131,13 @@
 			   a.rulecd   	as "rulecd",
 			   a.score     as "score"
 		from hsyh_trans_log a
-		where date = #{date}
+		where batchdate = #{date}
 		order by a.inputtime desc
 	</select>
 	<select id="queryResultCount" parameterType="hashmap" resultType="int">
 		select count(1)
 		from hsyh_trans_log a
-		where date = #{date}
+		where batchdate = #{date}
 		order by a.inputtime desc
 	</select>
 
