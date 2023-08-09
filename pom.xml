@@ -94,9 +94,9 @@
                 <version>1.2.1</version>
                 <configuration>
                     <password>#</password><!-- #表示启动时不需要密码，事实上对于代码混淆来说，这个密码没什么用，它只是一个启动密码 -->
-                    <packages>com.ahzx.mdfc.model,com.ahzx.mdfc.service,mapping.hshy</packages><!--
+                    <packages>com.ahzx.mdfc.model,com.ahzx.mdfc.service</packages><!--
                      加密的包名，多个包用逗号分开-->
-                    <cfgfiles>application-test.properties,*Mapper.xml</cfgfiles>
+                    <cfgfiles>application-test.properties</cfgfiles>
 
                     <excludes>org.spring</excludes>
                 </configuration>

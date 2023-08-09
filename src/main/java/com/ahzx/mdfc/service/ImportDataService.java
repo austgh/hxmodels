@@ -4,6 +4,7 @@ import com.ahzx.mdfc.dao.hshy.HyDaoImpl;
 import com.ahzx.mdfc.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -31,8 +32,8 @@ public class ImportDataService {
 	public ImportDataService(HyDaoImpl hyDao) {
 		this.hyDao = hyDao;
 	}
-	//@Scheduled(cron = "${importCronExpr}")
-	public void importData(){
+	@Scheduled(cron = "${importCronExpr}")
+	public void importData() throws IOException {
 		BufferedReader br = null;
 		List<Map<String, Object>> requstList = new ArrayList<>();
 		String date=CommUtils.getDate(0).replace("-","");
@@ -42,6 +43,12 @@ public class ImportDataService {
 		File inputfile = new File(filePath);// 线上审批
 		if(!inputfile.exists()){
 			log.info("当前日期为:{}下面的文件不存在,文件目录为:{}", date,filePath);
+			return;
+		}
+		String successFlag = "./hxData/input/" + date + "/over.csv";
+		File fileSuccess = new File(successFlag);
+		if (!fileSuccess.createNewFile()) {
+			log.info("文件已经解析成功");
 			return;
 		}
 		try {
