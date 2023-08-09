@@ -39,63 +39,43 @@ public class HangxinTaxindexLib {
         int oveTax = hyDao.queryForInt("hsyh", "hangxinTax.queryOveTax", param);
         return Integer.toString(oveTax);
     }
-    public String interTaxSale(String nsrsbh, Date lastDate) {
-        try {
-            String beginDate = CommUtils.getFirstDateByMonth(lastDate, -11);
-            String enddate = CommUtils.getFirstDateByMonth(lastDate, 1);
-            Map<String, Object> param = new HashMap<>();
-            param.put("nsrsbh", nsrsbh);
-            param.put("begindate", beginDate);
-            param.put("enddate", enddate);
-            param.put("zsxmdm", "10101");
-            List<Map<String, Object>> ysxInfoList = hyDao.queryForList("hsyh", "hangxinTax.queryInterTaxSale", param);
-            //相同金额数据加总合并
-            Map<String, Object> sumysxMap = new TreeMap<>();
-            for (Map<String, Object> ysxInfo : ysxInfoList) {
-                String sssqz = (String) ysxInfo.get("sssqz");
-                String freq = (String) ysxInfo.get("freq");
-                double sumysx;
-                if (CommUtils.isEmptyMap(sumysxMap)) {
-                    sumysx = 0;
-                } else {
-                    sumysx = sumysxMap.get(sssqz) == null ? 0 : (double) sumysxMap.get(sssqz);
-                }
-                //如果纳税频率为季度且销售额为0，直接返回”Y“
-                double ysx = Double.parseDouble(ysxInfo.get("ysx").toString());
-                if ("Q".equals(freq) && ysx == 0) {
+    public String interTaxSale(Map<String, Object> param) {
+        List<Map<String, Object>> ysxInfoList = hyDao.queryForList("hsyh", "hangxinTax.queryInterTaxSale", param);
+        //相同金额数据加总合并
+        Map<String, Object> sumysxMap = new TreeMap<>();
+        for (Map<String, Object> ysxInfo : ysxInfoList) {
+            String sssqz = (String) ysxInfo.get("sssqz");
+            String freq = (String) ysxInfo.get("freq");
+            double sumysx;
+            if (CommUtils.isEmptyMap(sumysxMap)) {
+                sumysx = 0;
+            } else {
+                sumysx = sumysxMap.get(sssqz) == null ? 0 : (double) sumysxMap.get(sssqz);
+            }
+            //如果纳税频率为季度且销售额为0，直接返回”Y“
+            double ysx = Double.parseDouble(ysxInfo.get("ysx").toString());
+            if ("Q".equals(freq) && ysx == 0) {
+                return "Y";
+            }
+            sumysx = sumysx + ysx;
+            sumysxMap.put(sssqz, sumysx);
+        }
+        int zeroCount = 0;
+        for (String keyvalue : sumysxMap.keySet()) {
+            double sumysx = (double) sumysxMap.get(keyvalue);
+            if (sumysx == 0) {
+                zeroCount = zeroCount + 1;
+                if (zeroCount >= 3) {
                     return "Y";
                 }
-                sumysx = sumysx + ysx;
-                sumysxMap.put(sssqz, sumysx);
+            } else {
+                zeroCount = 0;
             }
-            int zeroCount = 0;
-            for (String keyvalue : sumysxMap.keySet()) {
-                double sumysx = (double) sumysxMap.get(keyvalue);
-                if (sumysx == 0) {
-                    zeroCount = zeroCount + 1;
-                    if (zeroCount >= 3) {
-                        return "Y";
-                    }
-                } else {
-                    zeroCount = 0;
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return "N";
     }
 
-    public String mainBusDownnow(String nsrsbh, Date lastdate, int months) {
-
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -months);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, -months + 12); //月初
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    public String mainBusDownnow(Map<String, Object> param) {
         List<Map<String, Object>> ysxseMapList = hyDao.queryForList("hsyh", "hangxinTax.querytaxmainBusDown", param);
         double sumYsxse = 0;
         int monthsCount = 0;
@@ -112,52 +92,27 @@ public class HangxinTaxindexLib {
         return Double.toString(avgYsxse);
     }
 
-    public String lasProfit(String nsrsbh) {
-        //查询上年度的利润总额lastyear
+    public String yearProfit(String nsrsbh,int year) {
         Map<String, Object> param = new HashMap<>();
         param.put("nsrsbh", nsrsbh);
-        param.put("lastyear", CommUtils.getDate(-1).substring(0, 4));
+        param.put("lastyear", CommUtils.getDate(-year).substring(0, 4));
         double lasProfit = hyDao.queryForDouble("hsyh", "hangxinTax.queryLasProfit", param);
         if (lasProfit <= 0.00d) {
-            param.put("lastyear", CommUtils.getDate(-2).substring(0, 4));
+            param.put("lastyear", CommUtils.getDate(-year-1).substring(0, 4));
             lasProfit = hyDao.queryForDouble("hsyh", "hangxinTax.queryLasProfit", param);
         }
         return Double.toString(lasProfit);
     }
 
-    public String befLasYearProfit(String nsrsbh) {
-        //查询上年度的利润总额lastyear
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("lastyear", CommUtils.getDate(-2).substring(0, 4));
-        double lasProfit = hyDao.queryForDouble("hsyh", "hangxinTax.queryLasProfit", param);
-        if (lasProfit == 0.00d) {
-            param.put("lastyear", CommUtils.getDate(-3).substring(0, 4));
-            lasProfit = hyDao.queryForDouble("hsyh", "hangxinTax.queryLasProfit", param);
-        }
-        return Double.toString(lasProfit);
-    }
-
-    public String taxSaletenper(String nsrsbh,Date lastdate) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -2);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, 1);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    /*
+     *企业近三个月申报销售额
+     */
+    public String taxSaletenper(Map<String, Object> param) {
         double taxSaletenper = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);
         return Double.toString(taxSaletenper);
     }
 
-    public String taxSalethirtyper(String nsrsbh,Date lastdate) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -11);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, 1);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    public String taxSalethirtyper(Map<String, Object> param) {
         double taxSalethirtyper = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);
         return Double.toString(taxSalethirtyper);
     }
@@ -172,13 +127,9 @@ public class HangxinTaxindexLib {
         return Integer.toString(taxSalethirtyper);
     }
 
-    public String incTax(String nsrsbh,Date lastdate) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -11);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("beginyear", begindate.substring(0, 4));
+    public String incTax(Map<String, Object> param) {
         param.put("zsxmdm", "10104");
-        double incTax = hyDao.queryForDouble("hsyh", "hangxinTax.querylastYearTax", param);
+        double incTax = hyDao.queryForDouble("hsyh", "hangxinTax.queryIncTax", param);
         return Double.toString(incTax);
     }
 
@@ -202,56 +153,25 @@ public class HangxinTaxindexLib {
         double tax2YNetAss = hyDao.queryForDouble("hsyh", "hangxinTax.querytax2YNetAss", param);
         return Double.toString(tax2YNetAss);
     }
-    public String taxsale3M(String nsrsbh, Date lastdate) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -2);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, 1);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    public String taxsale3M(Map<String, Object> param) {
         double taxsale3M = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);
         return Double.toString(taxsale3M);
     }
-    public String YSXSE12M(String nsrsbh, Date lastdate, int months) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -months);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, -months + 12);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    public String ysxse12M(Map<String, Object> param) {
         double YSXSE12M = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);
         return Double.toString(YSXSE12M);
     }
-    public String zzsNse12m(String nsrsbh,Date lastdate, int months) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -months);
-        String enddate = CommUtils.getFirstDateByMonth(lastdate, -months + 12);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("begindate", begindate);
-        param.put("enddate", enddate);
-        param.put("zsxmdm", "10101");
+    public String zzsNse12m(Map<String, Object> param) {
         double zzsNse12m = hyDao.queryForDouble("hsyh", "hangxinTax.queryzzsNse", param);
         return Double.toString(zzsNse12m);
     }
-    public String lastYearTax(String nsrsbh, Date lastDate, int months) {
-        String begindate = CommUtils.getFirstDateByMonth(lastDate, -months);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("beginyear", begindate.substring(0, 4));
-        param.put("zsxmdm", "10101");
+    public String lastYearTax(Map<String, Object> param) {
         double lastYearTax = hyDao.queryForDouble("hsyh", "hangxinTax.querylastYearTax", param);
         return Double.toString(lastYearTax);
     }
-    public String YSXSRLast(String nsrsbh, Date lastdate, int months) {
-        String begindate = CommUtils.getFirstDateByMonth(lastdate, -months);
-        Map<String, Object> param = new HashMap<>();
-        param.put("nsrsbh", nsrsbh);
-        param.put("beginyear", begindate.substring(0, 4));
-        param.put("zsxmdm", "10101");
-        double lastYearTax = hyDao.queryForDouble("hsyh", "hangxinTax.querylastYearTax", param);
-        return Double.toString(lastYearTax);
+    public String ysxsrLast(Map<String, Object> param) {
+        double ysxsrLast = hyDao.queryForDouble("hsyh", "hangxinTax.queryYSXSRTax", param);
+        return Double.toString(ysxsrLast);
     }
     public String tax3MIllegal_unDeal(String nsrsbh) {
         int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_unDeal", nsrsbh);

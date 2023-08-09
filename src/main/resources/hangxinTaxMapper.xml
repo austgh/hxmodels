@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hangxinTax">
+
+    <select id="querytaxLev" parameterType="String" resultType="String">
+        select Xyjb
+        from dwa_base_xyxx
+        where nsrsbh = #{nsrsbh}
+        order by Nd desc
+        limit 1
+    </select>
+
+    <select id="querytaxStatus" parameterType="String" resultType="String">
+        select Nsrztmc
+        from dwa_base_djxx
+        where nsrsbh = #{nsrsbh}
+    </select>
+
+
+
+    <select id="queryzzsNse" parameterType="map" resultType="double">
+        select sum(ynse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+        and sssqq >= #{begindate}
+        and sssqz &lt;#{enddate}
+        and rptflg in ('M', 'Q')
+    </select>
+
+    <select id="querylastYearTax" parameterType="map" resultType="double">
+       select sum(ynse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+/*          and sssqq >= #{begindate}
+          and sssqz &lt;#{enddate}*/
+          and (substr(sssqz, 1, 4) = #{year}
+        and rptflg  in ('M', 'Q')
+    </select>
+
+    <select id="queryYSXSRTax" parameterType="map" resultType="double">
+        select sum(ysxse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+          and zsxmdm = #{zsxmdm}
+        /*  and sssqq >= #{begindate}
+          and sssqz &lt;#{enddate}*/
+          and substr(sssqz, 1, 4) = #{year}
+          and rptflg  in ('M', 'Q')
+    </select>
+
+
+
+    <select id="queryRecentlyDate" parameterType="map" resultType="string">
+        select DATE_FORMAT(IFNULL(max(sssqz),'1970-01-01'), '%Y-%m-%d') AS "sssqz"
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+          and zsxmdm = '10101'
+          and rptflg in ('M', 'Q')
+    </select>
+
+    <select id="querytaxSaletenper" parameterType="map" resultType="double">
+        select sum(ysxse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+        and sssqq>= #{begindate}
+        and sssqz&lt;#{enddate}
+        and rptflg in ('M', 'Q')
+    </select>
+
+    <select id="querytaxmainBusDown" parameterType="map" resultType="map">
+        select ysxse as "ysxse",
+               rptflg as "rptflg"
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+        and sssqq>= #{begindate}
+        and sssqz &lt;#{enddate}
+        and rptflg in ('M', 'Q')
+    </select>
+
+    <select id="queryYSXSR" parameterType="map" resultType="double">
+       select sum(ysxse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+          and sssqq >= #{begindate}
+          and sssqz &lt;#{enddate}
+        and rptflg in ('M', 'Q')
+    </select>
+
+    <select id="queryOveTax" parameterType="map" resultType="int">
+        select count(1)
+          from dwa_base_wfwzxx
+         where nsrsbh = #{nsrsbh}
+           and Sswfsd_dm in ('050202', '050204', '050204')
+           and DJRQ >=  #{begindate}
+    </select>
+
+    <select id="queryTax3MIllegal_unDeal" parameterType="String" resultType="int">
+		select count(1)
+	    from dwa_base_wfwzxx
+	    where SSWFXWCLZT_DM!='38'
+	    and NSRSBH=#{nsrsbh}
+        and TIMESTAMPDIFF(MONTH, DJRQ,sysdate())>=3
+	</select>
+
+    <select id="queryLasProfit" parameterType="map" resultType="double">
+        select 	ifnull(sum(lrze),0) as "lrze"
+            from (select case
+                 when kjzdzz_dm = '201' then
+                  bys
+                 when kjzdzz_dm = '102' then
+                  byje
+                 when kjzdzz_dm = '101' then
+                  bqje
+                else 0
+               end as lrze
+          from dwa_base_lrbxx
+         where nsrsbh =  #{nsrsbh}
+           and substr(SSQZ, 1, 4) =#{lastyear}
+           and TIMESTAMPDIFF(DAY, SSQQ,Ssqz)>=360
+        ) a
+    </select>
+
+    <select id="queryTax3MIllegal" parameterType="String" resultType="int">
+         select count(1)
+            from dwa_base_wfwzxx
+            where nsrsbh = #{nsrsbh}
+            and djrq>=#{begindate}
+    </select>
+
+    <select id="queryInterTaxSale" parameterType="map" resultType="map">
+        select ysxse as "ysx",
+        DATE_FORMAT(sssqz, '%Y-%m-%d') AS "sssqz",
+        rptflg as "freq"
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+        and zsxmdm = #{zsxmdm}
+        and sssqq >= #{begindate}
+        and sssqz &lt;#{enddate}
+        and rptflg in ('M', 'Q')
+    </select>
+    
+    <select id="querytax2YNetAss" parameterType="map" resultType="double">
+       select sum(Qmye_Qy)
+          from dwa_base_zcfzxx
+         where nsrsbh = #{nsrsbh}
+           and Qyxmmc like '所有者权益%'
+           and TIMESTAMPDIFF(DAY, SSQQ,Ssqz)>=360
+           and (substr(SSQQ, 1, 4) = #{lastyear} or substr(SSQQ, 1, 4) =
+               #{beforlastyear})
+    </select>
+    
+    <select id="queryTax2YPro" parameterType="map" resultType="double">
+        select ifnull(sum(bnljje), 0)
+          from dwa_base_lrbxx
+         where nsrsbh = #{nsrsbh}
+           and hmc like '%、净利润%'
+            and TIMESTAMPDIFF(DAY, SSQQ,Ssqz)>=360
+           and (substr(SSQQ, 1, 4) = #{lastyear} or
+               substr(SSQQ, 1, 4) = #{beforlastyear})
+    </select>
+
+    <select id="queryRecentlyIncomeTaxDate" parameterType="String" resultType="String">
+        select DATE_FORMAT(IFNULL(max(sssqz),'1970-01-01'), '%Y-%m-%d') AS "sssqz"
+        from dwa_base_sbxx
+        where nsrsbh =  #{nsrsbh}
+          and zsxmdm = '10104'
+          and rptflg ='Q'
+    </select>
+    <select id="queryIncTax" parameterType="map" resultType="double">
+        select sum(ynse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+          and zsxmdm = '10104'
+--           and sssqq >= #{begindate}
+--           and sssqz &lt;#{enddate}
+          and (substr(sssqz, 1, 4) = #{year}
+          and rptflg ='Q'
+    </select>
+
+</mapper>

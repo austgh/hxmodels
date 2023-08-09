@@ -22,13 +22,13 @@ import java.util.Map;
  * @date 2023年07月2023/7/25日15:54
  */
 @Service
-public class MainService {
-    private final Logger log= LoggerFactory.getLogger(MainService.class);
+public class ModelService {
+    private final Logger log= LoggerFactory.getLogger(ModelService.class);
     private final HyDaoImpl hyDao;
 
     IndexManageModel indexManageModel;
 
-    public MainService(HyDaoImpl hyDao, IndexManageModel indexManageModel) {
+    public ModelService(HyDaoImpl hyDao, IndexManageModel indexManageModel) {
         this.hyDao = hyDao;
         this.indexManageModel = indexManageModel;
     }
@@ -59,7 +59,9 @@ public class MainService {
                 //加工指标
                 Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh);
                 //处理结果
+                modelMap.putAll(entInfo);
                 log.info("{}指标加工结果:{}",entname,modelMap);
+                hyDao.insert("hsyh", "common.insertHsyhDcmTransLog", modelMap);
                 Map<String, Object> resultMap = getModelRule(modelMap, entInfo);
                 resultMap.putAll(entInfo);
                 resultMap.put("batchdate", date);
@@ -90,10 +92,10 @@ public class MainService {
 
     private Map<String,Object> getModelRule(Map<String, Object> modelMap,Map<String, Object> entInfo) {
         Map<String, Object> resultMap = new HashMap<>();
-        String ifkjedai=(String) entInfo.get("ifkjedai");
+        String ifkjedai=(String) entInfo.get("ifkjedai")==null?"N":(String)entInfo.get("ifkjedai");;
         String hytype=(String) entInfo.get("hytype");
         String hytypecode=(String) entInfo.get("hytypecode");
-        String xedoldcust=(String) entInfo.get("xedoldcust");
+        String xedoldcust= entInfo.get("xedoldcust")==null?"N":(String)entInfo.get("xedoldcust");
         int score=0;
         StringBuilder result = new StringBuilder();
         String taxLev=modelMap.get("taxLev")==null?"":modelMap.get("taxLev").toString();
@@ -141,7 +143,7 @@ public class MainService {
         String incTax = modelMap.get("incTax")==null?"0":modelMap.get("incTax").toString();
 
         double incTaxValue = Double.parseDouble(incTax);
-        if (incTaxValue <= 0) {
+        if (incTaxValue <= 0&&!"Y".equals(xedoldcust)) {
             if ("N".equals(ifkjedai)) {
                 score += 20;
             }
@@ -158,15 +160,15 @@ public class MainService {
             result.append("AP30,");
         }
 
-        if (taxSalethirtyperValue / 4 * 0.5 > taxSaletenperValue) {
-            result.append("AP31,");
-        }
+        //if (taxSalethirtyperValue / 4 * 0.5 > taxSaletenperValue) {
+        //    result.append("AP31,");
+        //}
 
 
         if("N".equals(ifkjedai)&&taxSalethirtyperValue<20000000&&("516".equals(hytypecode)||"5164".equals(hytypecode)||"5165".equals(hytypecode))){
             score +=500;
             result.append("AP39,");
-        }else if("N".equals(ifkjedai)&&taxSalethirtyperValue<50000000){
+        }else if("N".equals(ifkjedai)&&taxSalethirtyperValue<5000000){
             score +=500;
             result.append("AP39,");
         }else if("Y".equals(ifkjedai)&&taxSalethirtyperValue<2000000){
@@ -202,7 +204,7 @@ public class MainService {
                 result.append("AP37,");
             } else if((taxSalethirtyperValue/4*0.3 >=taxSaletenperValue) && taxSalethirtyperValue<=20000000){
                 score += 20;
-                result.append("AP37,");
+                result.append("AP31,");
             }
         }else{
             if (less_than_50000000 && between_0_6_and_0_7 ) {
@@ -234,7 +236,7 @@ public class MainService {
                 result.append("AP37,");
             }else if((taxSalethirtyperValue/4*0.5 >=taxSaletenperValue)){
                 score += 50;
-                result.append("AP37,");
+                result.append("AP31,");
             }
         }
 
@@ -258,7 +260,7 @@ public class MainService {
 
         double befLasYearProfitValue = Double.parseDouble(befLasYearProfit);
         double lasProfitValue = Double.parseDouble(lasProfit);
-        if ("Y".equals(xedoldcust) && "N".equals(ifkjedai)) {
+        if ("Y".equals(xedoldcust)) {
             result.append("AP38,");
         } else if (befLasYearProfitValue < 0 && lasProfitValue < 0) {
             score += 30;
@@ -271,7 +273,7 @@ public class MainService {
             score +=500;
             result.append("AP119,");
         }
-        if("N".equals(xedoldcust)&&Double.parseDouble(tax3MIllegal)>0){
+        if(!"Y".equals(xedoldcust)&&Double.parseDouble(tax3MIllegal)>0){
             score +=500;
             result.append("AP119,");
         }
@@ -284,6 +286,7 @@ public class MainService {
 
         String taxsale3M = modelMap.get("taxsale3M") == null ? "0" : modelMap.get("taxsale3M").toString();
         if (Double.parseDouble(taxsale3M) <= 0) {
+            score +=500;
             result.append("BL72,");
         }
 
@@ -294,7 +297,7 @@ public class MainService {
         double ysxsr=Double.parseDouble(YSXSRBef)+Double.parseDouble(YSXSRLast);
         double tax2YProValue=Double.parseDouble(tax2YPro);
         double tax2YNetAssValue= Double.parseDouble(tax2YNetAss);
-        if ((!"Y".equals(xedoldcust) || !"N".equals(ifkjedai))&& !CommUtils.isEmptyStr(tax2YPro) && !CommUtils.isEmptyStr(tax2YNetAss) && !CommUtils.isEmptyStr(YSXSRBef) && !CommUtils.isEmptyStr(YSXSRLast)) {
+        if ((!"Y".equals(xedoldcust) || !"N".equals(ifkjedai))) {
             if("N".equals(ifkjedai)&&(tax2YProValue< -500000||tax2YProValue< -0.1*ysxsr)&&(tax2YNetAssValue<400000||tax2YNetAssValue<0.15*ysxsr)){
                 score +=500;
                 result.append("AP122,");
