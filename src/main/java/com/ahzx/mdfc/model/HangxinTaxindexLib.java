@@ -6,6 +6,7 @@ import com.ahzx.mdfc.utils.MathUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -39,37 +40,62 @@ public class HangxinTaxindexLib {
         int oveTax = hyDao.queryForInt("hsyh", "hangxinTax.queryOveTax", param);
         return Integer.toString(oveTax);
     }
-    public String interTaxSale(Map<String, Object> param) {
+    public String interTaxSale(Map<String, Object> param){
         List<Map<String, Object>> ysxInfoList = hyDao.queryForList("hsyh", "hangxinTax.queryInterTaxSale", param);
-        //相同金额数据加总合并
-        Map<String, Object> sumysxMap = new TreeMap<>();
-        for (Map<String, Object> ysxInfo : ysxInfoList) {
-            String sssqz = (String) ysxInfo.get("sssqz");
-            String freq = (String) ysxInfo.get("freq");
-            double sumysx;
-            if (CommUtils.isEmptyMap(sumysxMap)) {
-                sumysx = 0;
-            } else {
-                sumysx = sumysxMap.get(sssqz) == null ? 0 : (double) sumysxMap.get(sssqz);
-            }
-            //如果纳税频率为季度且销售额为0，直接返回”Y“
-            double ysx = Double.parseDouble(ysxInfo.get("ysx").toString());
-            if ("Q".equals(freq) && ysx == 0) {
-                return "Y";
-            }
-            sumysx = sumysx + ysx;
-            sumysxMap.put(sssqz, sumysx);
-        }
-        int zeroCount = 0;
-        for (String keyvalue : sumysxMap.keySet()) {
-            double sumysx = (double) sumysxMap.get(keyvalue);
-            if (sumysx == 0) {
-                zeroCount = zeroCount + 1;
-                if (zeroCount >= 3) {
-                    return "Y";
+        if(!CommUtils.isEmptyList(ysxInfoList)&&ysxInfoList.size()>0){
+            try{
+                //相同金额数据加总合并
+                String beginDate = (String) param.get("begindate");
+                String endDate = (String) param.get("enddate");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+                Date date=format.parse(beginDate);
+
+                String date1=beginDate;
+                Map<String, Object> sumysxMap = new TreeMap<>();
+                int i=0;
+                //初始化数据
+                for (Map<String, Object> ysxInfo : ysxInfoList) {
+                    if(ysxInfo.get(date1)==null){
+                        sumysxMap.put(date1, 0);
+                    }
+                    date1 = CommUtils.getFirstDateByMonth(date, ++i);
+                    if(date1.compareTo(endDate)>0){
+                        break;
+                    }
                 }
-            } else {
-                zeroCount = 0;
+
+                for (Map<String, Object> ysxInfo : ysxInfoList) {
+                    String sssqz = (String) ysxInfo.get("sssqz");
+                    String freq = (String) ysxInfo.get("freq");
+                    double sumysx;
+                    if (CommUtils.isEmptyMap(sumysxMap)) {
+                        sumysx = 0;
+                    } else {
+                        sumysx = sumysxMap.get(sssqz) == null ? 0 : (double) sumysxMap.get(sssqz);
+                    }
+                    //如果纳税频率为季度且销售额为0，直接返回”Y“
+                    double ysx = Double.parseDouble(ysxInfo.get("ysx").toString());
+                    if ("Q".equals(freq) && ysx == 0) {
+                        return "Y";
+                    }
+                    sumysx = sumysx + ysx;
+                    sumysxMap.put(sssqz, sumysx);
+                }
+                int zeroCount = 0;
+                for (String keyvalue : sumysxMap.keySet()) {
+                    double sumysx = (double) sumysxMap.get(keyvalue);
+                    if (sumysx == 0) {
+                        zeroCount = zeroCount + 1;
+                        if (zeroCount >= 3) {
+                            return "Y";
+                        }
+                    } else {
+                        zeroCount = 0;
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
         return "N";

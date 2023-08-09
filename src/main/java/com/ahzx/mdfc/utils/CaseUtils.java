@@ -33,8 +33,6 @@ public class CaseUtils {
 	
 	/**
 	 * 将null转成空串
-	 * @param str
-	 * @return
 	 */
 	public static String changeNullStr(String str){
 		return str == null ? "" : str;
@@ -42,8 +40,6 @@ public class CaseUtils {
 	
 	/**
 	 * 判断字符串是否为空或空串
-	 * @param str
-	 * @return
 	 */
 	public static boolean isNullStr(String str){
 		return str == null || "".equals(str);

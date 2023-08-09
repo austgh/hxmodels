@@ -145,8 +145,6 @@ public class CommUtils {
 	 * 日期格式字符串转换成时间戳
 	 * @param date_str 字符串日期
 	 * @param format 如：yyyy-MM-dd HH:mm:ss
-	 * @return
-	 * @throws ParseException 
 	 */
 	public static long date2TimeStamp(String date_str, String format)  {
 		long time = 0L;
@@ -167,14 +165,10 @@ public class CommUtils {
 
 	/**
 	 * 从日期中抽取月份
-	 * @param list
-	 * @return
 	 */
 	private static Set<Integer> getMonthsFromDate(List<Map<String, Object>> list, String cloumn){
 		Set<Integer> set = new HashSet<>();
-		ListIterator<Map<String, Object>> listIterator = list.listIterator();
-		while(listIterator.hasNext()){
-			Map<String, Object> temp = listIterator.next();
+		for (Map<String, Object> temp : list) {
 			String date = (String) temp.get(cloumn);
 			String month = date.substring(4, 6);
 			int mon = Integer.parseInt(month);
@@ -187,34 +181,20 @@ public class CommUtils {
 	 * 判断一个List集合是否为空
 	 */
 	public static boolean isEmptyList(List<?> list){
-		if (null == list || list.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return null == list || list.isEmpty();
 	}
 	/**
 	 * 判断一个Map集合是否为空
-	 * @param map
 	 */
 	public static boolean isEmptyMap(Map<?, ?> map){
-		if (null == map || map.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return null == map || map.isEmpty();
 	}
 	
 	/**
 	 * 判断一个字符串是否为空
-	 * @param object
 	 */
 	public static boolean isEmptyStr(Object object){
-		if (null == object || "".equals(object)) {
-			return true;
-		} else {
-			return false;
-		}
+		return null == object || "".equals(object);
 	}
 	
 	
@@ -334,8 +314,6 @@ public class CommUtils {
 	/**
 	 * 取得日期类型为yyyyMM的日期距离现在的月数，
 	 * 如果为空取0
-	 * @param dateStr
-	 * @return
 	 */
 	public static int getMonthNearNow(String dateStr) {
 		if(isEmptyStr(dateStr)) return 0;
@@ -347,23 +325,14 @@ public class CommUtils {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		assert date != null;
 		start.setTime(date);
 		return (now.get(Calendar.YEAR)-start.get(Calendar.YEAR))*12+now.get(Calendar.MONTH)-start.get(Calendar.MONTH);
 	}
-	
-	/**
-	 * 获取身份证中性别信息
-	 * @param idCard
-	 * @return F-女  M-男
-	 */
-	public static String getGenderByIdCard(String idCard) {
-		if(idCard.length()>=18)	return Integer.parseInt(idCard.substring(16, 17))%2==0?"F":"M";
-		else return "";
-	}
+
 	
 	/**
 	 * 最大逾期计算
-	 * @param str
 	 * @return 最大的数字
 	 */
 	public static int getMaxChar(String str) {
@@ -373,7 +342,7 @@ public class CommUtils {
 		for (char c : loanOverDueArray) {
 			String cString = String.valueOf(c);
 			if(cString.matches("^[1-9]$")){
-				max = Integer.parseInt(cString) > max ? Integer.valueOf(cString) : max;
+				max = Math.max(Integer.parseInt(cString), max);
 			}
 		}
 		return max;
@@ -381,21 +350,18 @@ public class CommUtils {
 	
 	/**
 	 * 多条记录最大逾期期数
-	 * @param strs
-	 * @return
 	 */
 	public static int getMaxChar(List<String> strs) {
 		int max = 0;
 		for (String string : strs) {
 			int maxstr = getMaxChar(string);
-			max = maxstr > max ? maxstr : max ;
+			max = Math.max(maxstr, max);
 		}
 		return max;
 	}
 	
 	/**
 	 * 累计逾期次数计算
-	 * @param str
 	 * @return 累计次数
 	 */
 	public static int getOverCount(String str){
@@ -412,8 +378,6 @@ public class CommUtils {
 	}
 	/**
 	 * 多条记录逾期总次数
-	 * @param strs
-	 * @return
 	 */
 	public static int getOverCount(List<String> strs){
 		int count = 0;
@@ -422,41 +386,9 @@ public class CommUtils {
 		}
 		return count;
 	}
-	
-	/** 
-     * 将15位身份证号转化为18位返回，非15位身份证号原值返回 
-     * @param identityCard 
-     * @return 
-     */  
-    public static String trans15to18Id(String identityCard) {  
-        String retId = "";  
-        String id17 = "";  
-        int sum = 0;  
-        int y = 0;  
-        // 定义数组存放加权因子（weight factor）  
-        int[] wf = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };  
-        // 定义数组存放校验码（check code）  
-        String[] cc = { "1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2" };  
-        if (identityCard.length() != 15) {  
-            return identityCard;  
-        }  
-        // 加上两位年19  
-        id17 = identityCard.substring(0, 6) + "19" + identityCard.substring(6);  
-        // 十七位数字本体码加权求和  
-        for (int i = 0; i < 17; i++) {  
-            sum = sum + Integer.valueOf(id17.substring(i, i + 1)) * wf[i];  
-        }  
-        // 计算模  
-        y = sum % 11;  
-        // 通过模得到对应的校验码 cc[y]  
-        retId = id17 + cc[y];  
-        return retId;  
-    } 
+
 	/**
 	 * 判断两个月份相差几个月，日期格式为yyyyMMdd
-	 * @param month1
-	 * @param month2
-	 * @return
 	 */
     public static int monthApart(String month1,String month2){
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
@@ -475,37 +407,22 @@ public class CommUtils {
 	}
     /**
      * 判断数组中连续的0的个数是否大于等于times
-     * @param array
-     * @param times
-     * @return
      */
 	public static Boolean ArrayISContinuationTimes(int[] array,int times){
 		int count=0;
-		for(int i=0;i<array.length;i++){
-			if(array[i]==0){
+		for (int j : array) {
+			if (j == 0) {
 				count++;
-				if(count>=times){
+				if (count >= times) {
 					return true;
 				}
-			}else{
-				count=0;
+			} else {
+				count = 0;
 			}
 		}
 		return false;
 	}
-	
-	/**
-	 * 企业名称是否含有括号 有返回true 没有返回false
-	 */
-	public static Boolean isContinesParentheses(String entname) {
-		if (entname.contains("(") || entname.contains("（")) {
-			return true;
-		}
-		return false;
-	}
-	
 
-	
 	public static String getEaryMonth(int i) {
 		Calendar calendar = Calendar.getInstance();
 		Date date = new Date(System.currentTimeMillis());
@@ -516,11 +433,8 @@ public class CommUtils {
 	}
     /**
      * 去除List中重复数据
-     * @param list
-     * @return
      */
 	public static List<String> removeDuplicate(List<String> list) {
-		return new ArrayList<String>(new HashSet<String>(list));
+		return new ArrayList<>(new HashSet<>(list));
 	}
-
 }

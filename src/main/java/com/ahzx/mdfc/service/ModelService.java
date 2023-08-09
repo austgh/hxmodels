@@ -37,11 +37,12 @@ public class ModelService {
     public void process() throws IOException {
         log.info("每20秒执行一次!");
         String date = CommUtils.getDate(0).replace("-", "");
+        String yesterday=CommUtils.getDate(0,0,-1).replace("-", "");
         //文件路径
         String filePath = "./hxData/output/" + date + "/result.csv";
         File fileName = getFile(date, filePath);
         if (fileName == null) return;
-        List<Map<String, Object>> todoList= hyDao.queryForList("hsyh", "common.queryTodoListInfo", null);
+        List<Map<String, Object>> todoList= hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
         ListIterator<Map<String, Object>> iterator = todoList.listIterator();
         String entname = "";
         String serialno = "";
@@ -80,7 +81,6 @@ public class ModelService {
                 log.info("企业{}处理完毕!】", entname);
             }
         }
-        bufferwriter.newLine();
         bufferwriter.close();
         log.info("文件写入成功");
         String successFlag = "./hxData/output/" + date + "/success.csv";
@@ -361,4 +361,5 @@ public class ModelService {
         msg.put("inputtime", CommUtils.getDate());
         hyDao.insert("hsyh", "common.saveExceptionInfo", msg);
     }
+
 }

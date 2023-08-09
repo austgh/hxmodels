@@ -79,7 +79,7 @@
 		from hsyh_qymd a
 			left join hsyh_trans_log b
 		on a.serialno = b.serialno
-		where flag = 'Y'  and b.serialno is null
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday}
 		order by a.inputtime desc
 	</select>
 
