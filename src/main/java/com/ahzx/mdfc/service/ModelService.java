@@ -73,7 +73,7 @@ public class ModelService {
         }
         bufferwriter.close();
         log.info("文件写入成功");
-        String successFlag = "./hxData/output/" + date + "/success.csv";
+        String successFlag = "./hxData/output/" + date + "/success.ok";
         File fileSuccess = new File(successFlag);
         if (fileSuccess.createNewFile()) {
             log.info("标志文件创建成功！");
