@@ -34,9 +34,7 @@
         from dwa_base_sbxx
         where nsrsbh = #{nsrsbh}
         and zsxmdm = #{zsxmdm}
-/*          and sssqq >= #{begindate}
-          and sssqz &lt;#{enddate}*/
-          and (substr(sssqz, 1, 4) = #{year}
+        and substr(sssqz, 1, 4) = #{year}
         and rptflg  in ('M', 'Q')
     </select>
 
@@ -45,8 +43,6 @@
         from dwa_base_sbxx
         where nsrsbh = #{nsrsbh}
           and zsxmdm = #{zsxmdm}
-        /*  and sssqq >= #{begindate}
-          and sssqz &lt;#{enddate}*/
           and substr(sssqz, 1, 4) = #{year}
           and rptflg  in ('M', 'Q')
     </select>
@@ -177,9 +173,7 @@
         from dwa_base_sbxx
         where nsrsbh = #{nsrsbh}
           and zsxmdm = '10104'
---           and sssqq >= #{begindate}
---           and sssqz &lt;#{enddate}
-          and (substr(sssqz, 1, 4) = #{year}
+          and substr(sssqz, 1, 4) = #{year}
           and rptflg ='Q'
     </select>
 
