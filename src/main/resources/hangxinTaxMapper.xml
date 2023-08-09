@@ -131,7 +131,7 @@
 
     <select id="queryInterTaxSale" parameterType="map" resultType="map">
         select ysxse as "ysx",
-        DATE_FORMAT(sssqz, '%Y-%m-%d') AS "sssqz",
+        DATE_FORMAT(sssqq, '%Y-%m-%d') AS "sssqz",
         rptflg as "freq"
         from dwa_base_sbxx
         where nsrsbh = #{nsrsbh}

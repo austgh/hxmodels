@@ -6,7 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +34,7 @@ public class ImportDataService {
 	//@Scheduled(cron = "${importCronExpr}")
 	public void importData(){
 		BufferedReader br = null;
-		List<Map<String, Object>> requstList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> requstList = new ArrayList<>();
 		String date=CommUtils.getDate(0).replace("-","");
 		String filePath="./hxData/input/"+date+"/entname.csv";
 		log.info("当前日期为:{},文件名为:{}", date,filePath);
@@ -40,13 +45,14 @@ public class ImportDataService {
 			return;
 		}
 		try {
-			InputStreamReader fReader = new InputStreamReader(new FileInputStream(inputfile),"UTF-8");
+			InputStreamReader fReader = new InputStreamReader(Files.newInputStream(inputfile.toPath()),
+					StandardCharsets.UTF_8);
 			br = new BufferedReader(fReader);
-			String readLine = "";
+			String readLine;
 			int total=0;
 			while ((readLine = br.readLine()) != null) {
-				total++;
-				log.info("第{}行数据为:{}", total, readLine);
+				//total++;
+				//log.info("第{}行数据为:{}", total, readLine);
 				String[] params = readLine.split(";");
 				if (CommUtils.isEmptyStr(params[2]) || CommUtils.isEmptyStr(params[1])
 						|| CommUtils.isEmptyStr(params[0])) {
@@ -62,22 +68,14 @@ public class ImportDataService {
 				map.put("xedoldcust", params[6]);
 				map.put("inputtime", CommUtils.getDate());
 				map.put("batchdate", date);
-				if(total<=5000){
-					requstList.add(map);
-					hyDao.insert("mapping/hshy", "common.insertData", map);
+				requstList.add(map);
+				if(requstList.size()>=100){
+					saveDate(requstList, date);
 				}
 			}
-			//final HashMap<Object, Object> map1 = new HashMap<>();
-			//List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-			//for (int i = 0; i < (total + COUNT - 1) / COUNT; i++) {
-			//	if (total > (i + 1) * COUNT) {
-			//		map1.put("list", requstList.subList(i * COUNT, (i + 1) * COUNT));
-			//	} else {
-			//		map1.put("list", requstList.subList(i * COUNT, total));
-			//	}
-			//	hyDao.insert("mapping/hshy", "common.insertData1", map1);
-			//}
-			br.close();
+			if(!requstList.isEmpty()){
+				saveDate(requstList, date);
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally {
@@ -89,5 +87,13 @@ public class ImportDataService {
 				}
 			}
 		}
+	}
+
+	private void saveDate(List<Map<String, Object>> requstList, String date) {
+		final HashMap<Object, Object> map1 = new HashMap<>();
+		map1.put("batchdate", date);
+		map1.put("list", requstList);
+		hyDao.insert("hshy", "common.insertData1", map1);
+		requstList.clear();
 	}
 }

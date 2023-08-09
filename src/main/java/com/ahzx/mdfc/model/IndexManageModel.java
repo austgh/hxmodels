@@ -25,8 +25,9 @@ public class IndexManageModel {
 		this.hangxinTaxindexLib = hangxinTaxindexLib;
 	}
 
-	public Map<String, Object> hangxinTaxModelData(String nsrsbh) throws ParseException {
+	public Map<String, Object> hangxinTaxModelData(String nsrsbh,Map<String, Object> entInfo) throws ParseException {
 		Map<String, Object> modelMap = new HashMap<>();
+
 		modelMap.put("taxStatus",hangxinTaxindexLib.taxStatus(nsrsbh));
 		modelMap.put("taxLev",hangxinTaxindexLib.taxLev(nsrsbh));
 		modelMap.put("over24MTax",hangxinTaxindexLib.oveTax(nsrsbh,24));
@@ -97,6 +98,9 @@ public class IndexManageModel {
 			Map<String, Object> param = initParamMap(nsrsbh, begindate1Year, enddate1Year);
 			modelMap.put("incTax",hangxinTaxindexLib.incTax(param));
 		}
+		modelMap.putAll(entInfo);
+		log.info("{}指标加工结果:{}", entInfo.get("nsrmc"), modelMap);
+		hyDao.insert("hsyh", "common.insertHsyhDcmTransLog", modelMap);
 		return modelMap;
 	}
 	/*

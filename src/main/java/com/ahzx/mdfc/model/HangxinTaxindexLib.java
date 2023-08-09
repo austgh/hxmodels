@@ -3,6 +3,8 @@ package com.ahzx.mdfc.model;
 import com.ahzx.mdfc.dao.hshy.HyDaoImpl;
 import com.ahzx.mdfc.utils.CommUtils;
 import com.ahzx.mdfc.utils.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,7 @@ import java.util.*;
 @Component
 @Scope("prototype")
 public class HangxinTaxindexLib {
-
+    private final Logger log = LoggerFactory.getLogger(HangxinTaxindexLib.class);
     private final HyDaoImpl hyDao;
 
     public HangxinTaxindexLib(HyDaoImpl hyDao) {
@@ -55,15 +57,12 @@ public class HangxinTaxindexLib {
                 Map<String, Object> sumysxMap = new TreeMap<>();
                 int i=0;
                 //初始化数据
-                for (Map<String, Object> ysxInfo : ysxInfoList) {
-                    if(ysxInfo.get(date1)==null){
-                        sumysxMap.put(date1, 0);
-                    }
+                do {
+                    sumysxMap.put(date1, 0.0);
                     date1 = CommUtils.getFirstDateByMonth(date, ++i);
-                    if(date1.compareTo(endDate)>0){
-                        break;
-                    }
-                }
+                } while (date1.compareTo(endDate) <0);
+
+                log.info("初始化前的map:{}",sumysxMap);
 
                 for (Map<String, Object> ysxInfo : ysxInfoList) {
                     String sssqz = (String) ysxInfo.get("sssqz");
@@ -82,6 +81,7 @@ public class HangxinTaxindexLib {
                     sumysx = sumysx + ysx;
                     sumysxMap.put(sssqz, sumysx);
                 }
+                log.info("初始化后的map:{}",sumysxMap);
                 int zeroCount = 0;
                 for (String keyvalue : sumysxMap.keySet()) {
                     double sumysx = (double) sumysxMap.get(keyvalue);

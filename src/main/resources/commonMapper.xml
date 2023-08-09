@@ -103,9 +103,9 @@
 			#{inputtime})
 	</insert>
 
-	<insert id="insertData1" parameterType="List">
+	<insert id="insertData1" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,inputtime)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime)
 		select a.* from
 		(
 		<foreach collection="list" index="index" item="item" separator="union all">
@@ -117,6 +117,7 @@
 			#{item.hytype} as "hytype",
 			#{item.hytypecode} as "hytypecode",
 			#{item.xedoldcust} as "xedoldcust",
+			#{batchdate} as "batchdate",
 			#{item.inputtime} as "inputtime"
 			from dual
 		</foreach>

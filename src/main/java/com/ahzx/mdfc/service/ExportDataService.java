@@ -42,11 +42,7 @@ public class ExportDataService {
             final List<Map<String, Object>> resultList = hyDao.queryForList("mapping/hshy", "common.queryResultInfo",
                     date);
             for (Map<String, Object> stringObjectMap : resultList) {
-                StringBuilder stringBuffer = new StringBuilder();
-                stringBuffer.append(stringObjectMap.get("serialno")).append(";").append(stringObjectMap.get("nsrmc")).append(";").append(stringObjectMap.get("nsrsbh")).append(";").append(stringObjectMap.get("inputtime")).append(";").append(stringObjectMap.get("rulecd")).append(";").append(stringObjectMap.get("score"));
-                log.info("数据为:{}", stringBuffer);
-                bufferwriter.write(stringBuffer.toString());
-                bufferwriter.newLine();
+                ModelService.writeData(bufferwriter, stringObjectMap, log);
             }
             // 关闭流
             bufferwriter.newLine();
