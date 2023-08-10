@@ -35,6 +35,7 @@ public class ModelService {
 
     @Scheduled(cron = "${modelCronExpr}")
     public void process() throws IOException {
+        long startTime = System.currentTimeMillis();
         log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
@@ -87,6 +88,9 @@ public class ModelService {
         if (fileSuccess.createNewFile()) {
             log.info("标志文件创建成功！");
         }
+        long endTime = System.currentTimeMillis();
+        int time = (int) ((endTime - startTime) / 1000);
+        log.info("{}条数据导入共耗时{}秒",todoList.size(),time);
     }
 
     static void writeData(BufferedWriter bufferwriter, Map<String, Object> resultMap, Logger log) throws IOException {
@@ -323,9 +327,11 @@ public class ModelService {
         if (score <= 260) {
             resultMap.put("admtrsltsts", "A");
         }
-        if (!CommUtils.isEmptyStr(result)) {
-            final int length = result.lastIndexOf(",");
-            result = new StringBuilder(result.substring(0, length));
+        String resultStr=result.toString();
+        if (!CommUtils.isEmptyStr(resultStr)) {
+            log.info("触发项为:{}", resultStr);
+            final int length = resultStr.lastIndexOf(",");
+            result = new StringBuilder(resultStr.substring(0, length));
         }
 
         resultMap.put("score", score);
@@ -373,6 +379,18 @@ public class ModelService {
         msg.put("msg", exception);
         msg.put("inputtime", CommUtils.getDate());
         hyDao.insert("hsyh", "common.saveExceptionInfo", msg);
+    }
+
+    public static void main(String[] args) {
+        StringBuilder result = new StringBuilder();
+        //result.append("A68,");
+        if (!CommUtils.isEmptyStr(result.toString())) {
+            String resultStr=result.toString();
+            System.out.println("触发项为:{}"+result.toString());
+            final int length = resultStr.lastIndexOf(",");
+            result = new StringBuilder(resultStr.substring(0, length));
+        }
+        System.out.println("触发项为:"+result.toString());
     }
 
 }

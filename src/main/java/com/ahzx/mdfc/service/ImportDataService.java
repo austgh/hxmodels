@@ -34,6 +34,7 @@ public class ImportDataService {
 	}
 	@Scheduled(cron = "${importCronExpr}")
 	public void importData() throws IOException {
+		long startTime = System.currentTimeMillis();
 		BufferedReader br = null;
 		List<Map<String, Object>> requstList = new ArrayList<>();
 		String date=CommUtils.getDate(0).replace("-","");
@@ -51,18 +52,20 @@ public class ImportDataService {
 			log.info("文件已经解析成功");
 			return;
 		}
+		int total=0;
 		try {
 			InputStreamReader fReader = new InputStreamReader(Files.newInputStream(inputfile.toPath()),
 					StandardCharsets.UTF_8);
 			br = new BufferedReader(fReader);
 			String readLine;
-			int total=0;
+
 			while ((readLine = br.readLine()) != null) {
-				//total++;
-				//log.info("第{}行数据为:{}", total, readLine);
+				total++;
+				log.info("第{}行数据为:{}", total, readLine);
 				String[] params = readLine.split(";");
 				if (CommUtils.isEmptyStr(params[2]) || CommUtils.isEmptyStr(params[1])
 						|| CommUtils.isEmptyStr(params[0])) {
+					log.info("[水号:{}、企业名:{}或者同一社会信用代码:{}]为空",params[0],params[1],params[2]);
 					continue;
 				}
 				Map<String, Object> map = new HashMap<>();
@@ -94,6 +97,9 @@ public class ImportDataService {
 				}
 			}
 		}
+		long endTime = System.currentTimeMillis();
+		int time = (int) ((endTime - startTime) / 1000);
+		log.info("{}条数据导入共耗时{}秒",total,time);
 	}
 
 	private void saveDate(List<Map<String, Object>> requstList, String date) {
