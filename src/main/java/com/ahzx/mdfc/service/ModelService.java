@@ -38,11 +38,20 @@ public class ModelService {
         log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
+        if(date.compareTo("20240831")>0){
+            return;
+        }
+
+        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
+        if(CommUtils.isEmptyList(todoList)){
+            log.info("{}没有对应的数据需要导出", date);
+            return;
+        }
         //文件路径
         String filePath = "./hxData/output/" + date + "/result.csv";
         File fileName = getFile(date, filePath);
         if (fileName == null) return;
-        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
+
         ListIterator<Map<String, Object>> iterator = todoList.listIterator();
         String entname = "";
         String serialno = "";
