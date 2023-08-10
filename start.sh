@@ -1,0 +1,1 @@
+nohup java -Duser.timezone=GMT+08 -javaagent:hxmodels.jar -jar hxmodels.jar &
