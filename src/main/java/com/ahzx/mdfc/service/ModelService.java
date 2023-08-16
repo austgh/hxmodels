@@ -39,7 +39,7 @@ public class ModelService {
         log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
-        if(date.compareTo("20240831")>0){
+        if(date.compareTo("20240630")>0){
             return;
         }
 
@@ -379,18 +379,6 @@ public class ModelService {
         msg.put("msg", exception);
         msg.put("inputtime", CommUtils.getDate());
         hyDao.insert("hsyh", "common.saveExceptionInfo", msg);
-    }
-
-    public static void main(String[] args) {
-        StringBuilder result = new StringBuilder();
-        //result.append("A68,");
-        if (!CommUtils.isEmptyStr(result.toString())) {
-            String resultStr=result.toString();
-            System.out.println("触发项为:{}"+result.toString());
-            final int length = resultStr.lastIndexOf(",");
-            result = new StringBuilder(resultStr.substring(0, length));
-        }
-        System.out.println("触发项为:"+result.toString());
     }
 
 }
