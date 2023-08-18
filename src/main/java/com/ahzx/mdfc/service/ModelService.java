@@ -115,6 +115,13 @@ public class ModelService {
             score += 500;
         }
 
+        String taxNsrlx = modelMap.get("taxnsrlx") == null ? "N" : modelMap.get("taxnsrlx").toString();
+        if ("Y".equals(taxNsrlx)) {
+            result.append("BL69,");
+            score += 500;
+        }
+
+
         String taxStatus = modelMap.get("taxStatus") == null ? "" : modelMap.get("taxStatus").toString();
         if ("Y".equals(taxStatus)) {
             result.append("AP27,");
@@ -125,31 +132,32 @@ public class ModelService {
         String befLasYearTax = modelMap.get("befLasYearTax") == null ? "0" : modelMap.get("befLasYearTax").toString();
         double lastYearTaxValue = Double.parseDouble(lastYearTax);
         double befLasYearTaxValue = Double.parseDouble(befLasYearTax);
-        if ("Y".equals(xedoldcust) && lastYearTaxValue <= 100000) {
-            score += 20;
-            result.append("AP28,");
-        }
-        if (!"Y".equals(xedoldcust) && "N".equals(ifkjedai)) {
-            if ("C".equals(hytype) && lastYearTaxValue <= befLasYearTaxValue * 0.58) {
-                score += 40;
-                result.append("AP28,");
-            }
-            if (("E".equals(hytype) || "G".equals(hytype) || "K".equals(hytype)) && lastYearTaxValue <= befLasYearTaxValue * 0.62) {
+        if(lastYearTaxValue!=0||befLasYearTaxValue!=0||!"N".equals(xedoldcust)){
+            if ("Y".equals(xedoldcust) && lastYearTaxValue <= 100000) {
                 score += 20;
                 result.append("AP28,");
             }
-            if (!"C".equals(hytype) && !"E".equals(hytype) && !"G".equals(hytype) && !"K".equals(hytype) && lastYearTaxValue <= befLasYearTaxValue * 0.7) {
-                score += 40;
-                result.append("AP28,");
+            if (!"Y".equals(xedoldcust) && "N".equals(ifkjedai)) {
+                if ("C".equals(hytype) && lastYearTaxValue <= befLasYearTaxValue * 0.58) {
+                    score += 40;
+                    result.append("AP28,");
+                }
+                if (("E".equals(hytype) || "G".equals(hytype) || "K".equals(hytype)) && lastYearTaxValue <= befLasYearTaxValue * 0.62) {
+                    score += 20;
+                    result.append("AP28,");
+                }
+                if (!"C".equals(hytype) && !"E".equals(hytype) && !"G".equals(hytype) && !"K".equals(hytype) && lastYearTaxValue <= befLasYearTaxValue * 0.7) {
+                    score += 40;
+                    result.append("AP28,");
+                }
+            }
+            if (!"Y".equals(xedoldcust) && "Y".equals(ifkjedai)) {
+                if (lastYearTaxValue <= befLasYearTaxValue * 0.7) {
+                    score += 40;
+                    result.append("AP28,");
+                }
             }
         }
-        if (!"Y".equals(xedoldcust) && "Y".equals(ifkjedai)) {
-            if (lastYearTaxValue <= befLasYearTaxValue * 0.7) {
-                score += 40;
-                result.append("AP28,");
-            }
-        }
-
 
         String incTax = modelMap.get("incTax") == null ? "0" : modelMap.get("incTax").toString();
 

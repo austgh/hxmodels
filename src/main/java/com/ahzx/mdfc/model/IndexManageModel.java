@@ -27,7 +27,7 @@ public class IndexManageModel {
 
 	public Map<String, Object> hangxinTaxModelData(String nsrsbh,Map<String, Object> entInfo) throws ParseException {
 		Map<String, Object> modelMap = new HashMap<>();
-
+		modelMap.put("taxnsrlx",hangxinTaxindexLib.taxNsrlx(nsrsbh));
 		modelMap.put("taxStatus",hangxinTaxindexLib.taxStatus(nsrsbh));
 		modelMap.put("taxLev",hangxinTaxindexLib.taxLev(nsrsbh));
 		modelMap.put("over24MTax",hangxinTaxindexLib.oveTax(nsrsbh,24));

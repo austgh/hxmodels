@@ -33,6 +33,13 @@ public class HangxinTaxindexLib {
             return "N";
         }
     }
+    public String taxNsrlx(String nsrsbh) {
+        int taxNsrlx = hyDao.queryForInt("hsyh", "hangxinTax.querytaxNsrlx", nsrsbh);
+        if (taxNsrlx<1) {
+            return "Y";
+        }
+        return "N";
+    }
 
     public String oveTax(String nsrsbh, int month) {
         String begindate = CommUtils.getDateOfMonth(-month);
@@ -180,7 +187,7 @@ public class HangxinTaxindexLib {
         return Double.toString(tax2YNetAss);
     }
     public String taxsale3M(Map<String, Object> param) {
-        double taxsale3M = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);
+        double taxsale3M = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSale3M", param);
         return Double.toString(taxsale3M);
     }
     public String ysxse12M(Map<String, Object> param) {

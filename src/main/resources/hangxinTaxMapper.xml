@@ -16,7 +16,12 @@
         from dwa_base_djxx
         where nsrsbh = #{nsrsbh}
     </select>
-
+    <select id="querytaxNsrlx" parameterType="String" resultType="int">
+        select count(1)
+        from dwa_base_djxx
+        where nsrsbh = #{nsrsbh}
+          and nsrlx like '%一般纳税人%'
+    </select>
 
 
     <select id="queryzzsNse" parameterType="map" resultType="double">
@@ -64,7 +69,16 @@
         and zsxmdm = #{zsxmdm}
         and sssqq>= #{begindate}
         and sssqz&lt;#{enddate}
-        and rptflg in ('M', 'Q')
+        and rptflg='M'
+    </select>
+    <select id="querytaxSale3M" parameterType="map" resultType="double">
+        select sum(ysxse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+          and zsxmdm = #{zsxmdm}
+          and sssqq>= #{begindate}
+          and sssqz&lt;#{enddate}
+          and rptflg in ('M','Q')
     </select>
 
     <select id="querytaxmainBusDown" parameterType="map" resultType="map">
@@ -176,5 +190,51 @@
           and substr(sssqz, 1, 4) = #{year}
           and rptflg ='Q'
     </select>
+
+    <select id="querAssetDebtMaxEndDate" parameterType="hashmap" resultType="string">
+        select Max(ssqz)
+        from dwa_base_zcfzxx
+        where nsrsbh =#{nsrsbh}
+        order by ssqz desc
+    </select>
+
+<!--    <select id="queryEntTax2YNetAssNew" parameterType="hashmap" resultType="bigDecimal">-->
+<!--        select ifnull(qmye_qy, 0) + ifnull(ncye_qy, 0) as "tax2YNetAss"-->
+<!--          from dwa_base_zcfzxx-->
+<!--          where nsrsbh =#{nsrsbh}-->
+<!--          and qyxmmc like '所有者权益%'-->
+<!--          and ssqz=#{endDate}-->
+<!--        order by ssqq desc,ssqq asc-->
+<!--            LIMIT 1-->
+<!--    </select>-->
+
+    <select id="queryProfitMaxSsqz" parameterType="hashmap" resultType="string">
+        select Max(ssqz)
+        from dwa_base_lrbxx
+        where  nsrsbh=#{nsrsbh}
+        order by ssqz desc
+    </select>
+
+<!--    <select id="queryEntTax2YProNew" parameterType="hashmap" resultType="bigDecimal">-->
+<!--       select bnljje as tax2YPro-->
+<!--                 from dwa_base_lrbxx-->
+<!--                 where hmc like '%、净利润%'-->
+<!--                   and nsrsbh=#{nsrsbh}-->
+<!--                   and ssqz=#{endDate}-->
+<!--                   and bnljje is not null-->
+<!--                 order by ssqq desc,ssqq asc-->
+<!--                limit 1-->
+<!--    </select>-->
+<!--    <select id="queryEntTax2YProNew1" parameterType="hashmap" resultType="bigDecimal">-->
+<!--       select bqje as tax2YPro-->
+<!--                 from dwa_base_lrbxx-->
+<!--                 where hmc like '%、净利润%'-->
+<!--                   and nsrsbh=#{nsrsbh}-->
+<!--                   and ssqz in(#{endDate},#{endDate1})-->
+<!--                   and ssqq in(#{startDate},#{startDate1})-->
+<!--                   and bnljje is null-->
+<!--                 order by ssqq desc,ssqq asc-->
+<!--                     limit 1-->
+<!--    </select>-->
 
 </mapper>
