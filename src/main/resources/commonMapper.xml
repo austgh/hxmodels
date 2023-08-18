@@ -78,7 +78,7 @@
 			   a.xedoldcust as "xedoldcust"
 		from hsyh_qymd a
 			left join hsyh_trans_log b
-		on a.serialno = b.serialno
+		on a.serialno = b.serialno and a.batchdate=b.batchdate
 		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday}
 		order by a.inputtime desc
 	</select>
