@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -160,24 +162,70 @@ public class HangxinTaxindexLib {
     }
 
     public String tax2YPro(String nsrsbh) {
-        Map<String, Object> param = new HashMap<>();
-        String lastyear = CommUtils.getDate(-1).substring(0, 4);
-        String beforlastyear = CommUtils.getDate(-2).substring(0, 4);
-        param.put("nsrsbh", nsrsbh);
-        param.put("lastyear", lastyear);
-        param.put("beforlastyear", beforlastyear);
-        double tax2YPro = hyDao.queryForDouble("hsyh", "hangxinTax.queryTax2YPro", param);
-        return Double.toString(tax2YPro);
+        Map<String, Object> reqData = new HashMap<String, Object>();
+        reqData.put("nsrsbh", nsrsbh);
+        String ssqz =  hyDao.queryForString("tdqs", "hangxinTax.queryProfitMaxSsqz", reqData);
+        if(!CommUtils.isEmptyStr(ssqz)){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date dtDate= null;
+            try {
+                dtDate = sdf.parse(ssqz);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(dtDate!=null){
+                reqData.put("endDate", CommUtils.getDateOfMonth(dtDate,-11).substring(0,4)+"-12-31");
+                reqData.put("startDate",CommUtils.getDateOfMonth(dtDate,-11).substring(0,4)+"-01-01");
+                BigDecimal lastYeartax2YPro = (BigDecimal) hyDao.queryForObject("tdqs", "hangxinTax.queryEntTax2YProNew", reqData);
+                reqData.put("endDate1", CommUtils.getDateOfMonth(dtDate,-23).substring(0,4)+"-12-31");
+                reqData.put("startDate1", CommUtils.getDateOfMonth(dtDate,-23).substring(0,4)+"-01-01");
+                BigDecimal lastYeartax2YProByBqje = (BigDecimal) hyDao.queryForObject("tdqs", "hangxinTax.queryEntTax2YProNew1", reqData);
+                reqData.put("endDate", CommUtils.getDateOfMonth(dtDate,-23).substring(0,4)+"-12-31");
+                reqData.put("startDate", CommUtils.getDateOfMonth(dtDate,-23).substring(0,4)+"-01-01");
+                reqData.put("endDate1", CommUtils.getDateOfMonth(dtDate,-35).substring(0,4)+"-12-31");
+                reqData.put("startDate1", CommUtils.getDateOfMonth(dtDate,-35).substring(0,4)+"-01-01");
+                BigDecimal beforeLastYeartax2YPro = (BigDecimal) hyDao.queryForObject("tdqs", "hangxinTax.queryEntTax2YProNew", reqData);
+                BigDecimal beforeLastYeartax2YProByBqje = (BigDecimal) hyDao.queryForObject("tdqs", "hangxinTax.queryEntTax2YProNew1", reqData);
+
+                if(lastYeartax2YPro!=null&&beforeLastYeartax2YPro!=null) {
+                    return lastYeartax2YPro.add(beforeLastYeartax2YPro).toString();
+                }else if(lastYeartax2YPro!=null){
+                    return lastYeartax2YPro.add(beforeLastYeartax2YProByBqje).toString();
+                }else if(beforeLastYeartax2YPro!=null){
+                    return  beforeLastYeartax2YPro.add(lastYeartax2YProByBqje).toString();
+                }else{
+                   return beforeLastYeartax2YProByBqje.add(lastYeartax2YProByBqje).toString();
+                }
+            }
+        }
+        return "0.0";
     }
     public String tax2YNetAss(String nsrsbh) {
-        Map<String, Object> param = new HashMap<>();
-        String lastyear = CommUtils.getDate(-1).substring(0, 4);
-        String beforlastyear = CommUtils.getDate(-2).substring(0, 4);
-        param.put("nsrsbh", nsrsbh);
-        param.put("lastyear", lastyear);
-        param.put("beforlastyear", beforlastyear);
-        double tax2YNetAss = hyDao.queryForDouble("hsyh", "hangxinTax.querytax2YNetAss", param);
-        return Double.toString(tax2YNetAss);
+        Map<String, Object> reqData = new HashMap<>();
+        reqData.put("nsrsbh", nsrsbh);
+        String endDate =  hyDao.queryForString("tdqs", "hangxinTax.querAssetDebtMaxEndDate", reqData);
+        log.info("tax2YNetAss1 对应的日期为:{}",endDate);
+        if(!CommUtils.isEmptyStr(endDate)){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date dtDate= null;
+            try {
+                dtDate = sdf.parse(endDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if(dtDate!=null){
+                String endDate1=CommUtils.getDateOfMonth(dtDate,-11);
+                log.info("tax2YNetAss 对应的日期为:{}",endDate1);
+                reqData.put("endDate", endDate1.substring(0,4)+"-12-31");
+                BigDecimal tax2YNetAss = (BigDecimal) hyDao.queryForObject("tdqs", "preapp.queryEntTax2YNetAssNew", reqData);
+                if (tax2YNetAss != null) {
+                   return tax2YNetAss.toString();
+                }
+            }
+
+        }
+        return "0.0";
     }
     public String taxsale3M(Map<String, Object> param) {
         double taxsale3M = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxSaletenper", param);

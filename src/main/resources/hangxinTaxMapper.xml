@@ -177,4 +177,51 @@
           and rptflg ='Q'
     </select>
 
+    <select id="querAssetDebtMaxEndDate" parameterType="hashmap" resultType="string">
+        select Max(ssqz)
+        from dwa_base_zcfzxx t
+        where nsrsbh =#{nsrsbh}
+        order by ssqz desc
+    </select>
+
+    <select id="queryEntTax2YNetAssNew" parameterType="hashmap" resultType="bigDecimal">
+        select ifnull(qmye_qc, 0) + ifnull(ncye_zc, 0) as tax2YNetAss
+        from dwa_base_zcfzxx t
+        where nsrsbh =#{nsrsbh}
+          and qyxmmc like '所有者权益%'
+          and ssqz=#{endDate}
+        order by ssqz desc, ssqq asc
+        limit 1
+    </select>
+
+    <select id="queryProfitMaxSsqz" parameterType="hashmap" resultType="string">
+        select Max(ssqz)
+        from dwa_base_lrbxx t
+        where  nsrsbh=#{nsrsbh}
+        order by ssqz desc
+    </select>
+
+    <select id="queryEntTax2YProNew" parameterType="hashmap" resultType="bigDecimal">
+            select bnljje as tax2YPro
+            from dwa_base_lrbxx t
+            where hmc like '%、净利润%'
+              and nsrsbh=#{nsrsbh}
+              and ssqz=#{endDate}
+              and bnljje is not null
+            order by ssqz desc,ssqq asc
+                limit 1
+    </select>
+
+    <select id="queryEntTax2YProNew1" parameterType="hashmap" resultType="bigDecimal">
+         select bqje as tax2YPro
+         from dwa_base_lrbxx t
+         where hmc like '%、净利润%'
+           and nsrsbh=#{nsrsbh}
+           and ssqz in(#{endDate},#{endDate1})
+           and ssqq in(#{startDate},#{startDate1})
+           and bnljje is null
+         order by ssqz desc,ssqq asc
+            limit 1
+    </select>
+
 </mapper>
