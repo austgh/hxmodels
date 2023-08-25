@@ -134,6 +134,7 @@ public class HyDaoImpl implements BaseDao {
             result = object == null?0d:(double)object;
         } catch (Exception e) {
             logger.error("数据源：" + type + " 执行语句：" + sqlId + " 查询异常！", e);
+            result = 0;
         }
         return result;
     }
