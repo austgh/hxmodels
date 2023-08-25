@@ -186,7 +186,7 @@
 
     <select id="queryEntTax2YNetAssNew" parameterType="hashmap" resultType="double">
         select ifnull(tax2YNetAss,0)
-        from (select ifnull(qmye_zc, 0) + ifnull(ncye_zc, 0) as tax2YNetAss
+        from (select ifnull(qmye_qy, 0) + ifnull(ncye_qy, 0) as tax2YNetAss
         from dwa_base_zcfzxx t
         where nsrsbh =#{nsrsbh}
           and qyxmmc like '所有者权益%'
