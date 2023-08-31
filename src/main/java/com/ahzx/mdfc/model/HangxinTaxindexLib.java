@@ -122,8 +122,11 @@ public class HangxinTaxindexLib {
                 monthsCount = monthsCount + 1;
             }
         }
-        double avgYsxse = MathUtils.round(MathUtils.divide(sumYsxse, monthsCount), 2);
-        return Double.toString(avgYsxse);
+        if(monthsCount!=0){
+            double avgYsxse = MathUtils.round(MathUtils.divide(sumYsxse, monthsCount), 2);
+            return Double.toString(avgYsxse);
+        }
+        return "0";
     }
 
     public String yearProfit(String nsrsbh,int year) {
