@@ -47,7 +47,7 @@ public class IndexManageModel {
 		String volumeUpDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyDate",nsrsbh);
 		log.info("获取申报表的最新一期增值税数据的截止日期为:{}", volumeUpDate);
 
-		if(!CommUtils.isEmptyStr(volumeUpDate)){
+		if(!CommUtils.isEmptyStr(volumeUpDate)&& !"1970-01-01".equals(volumeUpDate)){
 			Date date=new SimpleDateFormat("yyyyy-MM-dd").parse(volumeUpDate);
 			//最近一年内
 			String begindate1Year = CommUtils.getFirstDateByMonth(date, -11);
@@ -91,7 +91,7 @@ public class IndexManageModel {
 		String lastRepartDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyIncomeTaxDate",nsrsbh);
 		log.info("获取申报表的最新一期所得税数据的截止日期为:{}", lastRepartDate);
 		//待处理日期
-		if(!CommUtils.isEmptyStr(lastRepartDate)){
+		if(!CommUtils.isEmptyStr(lastRepartDate)&&!"1970-01-01".equals(lastRepartDate)){
 			Date lastDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastRepartDate);
 			String begindate1Year = CommUtils.getFirstDateByMonth(lastDate, -11);
 			String enddate1Year = CommUtils.getFirstDateByMonth(lastDate, 1);
