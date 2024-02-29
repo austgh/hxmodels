@@ -51,7 +51,9 @@ public class ModelService {
         //文件路径
         String filePath = "./hxData/output/" + date + "/result.csv";
         File fileName = getFile(date, filePath);
-        if (fileName == null) return;
+        if (fileName == null) {
+            return;
+        }
 
         ListIterator<Map<String, Object>> iterator = todoList.listIterator();
         String entname = "";
@@ -309,6 +311,19 @@ public class ModelService {
         if (Double.parseDouble(taxsale3M) <= 0) {
             score += 500;
             result.append("BL72,");
+        }
+        double taxsale3MValue=Double.parseDouble(taxsale3M);
+        if(!"Y".equals(xedoldcust)){
+            if(taxsale3MValue>taxSalethirtyperValue*0.9){
+                score+=200;
+                result.append("AP141,");
+            } else if (taxsale3MValue>taxSalethirtyperValue*0.7) {
+                score+=150;
+                result.append("AP141,");
+            }else if(taxsale3MValue>taxSalethirtyperValue*0.5){
+                score+=100;
+                result.append("AP141,");
+            }
         }
 
         String tax2YNetAss = modelMap.get("tax2YNetAss") == null ? "0" : modelMap.get("tax2YNetAss").toString();
