@@ -34,7 +34,9 @@ public class ExportDataService {
         //文件路径
         String filePath = "./hxData/output/" + date + "/result.csv";
         File fileName = getFile(date, filePath);
-        if (fileName == null) return;
+        if (fileName == null) {
+            return;
+        }
         BufferedWriter bufferwriter;
         bufferwriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()), StandardCharsets.UTF_8));
         int count = hyDao.queryForInt("mapping/hshy", "common.queryResultCount", date);
