@@ -39,7 +39,7 @@ public class ModelService {
         log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
-        if(date.compareTo("20240630")>0){
+        if(date.compareTo("20260630")>0){
             return;
         }
 
