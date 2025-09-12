@@ -6,7 +6,10 @@ import com.ahzx.mdfc.model.IndexManageModel;
 import com.ahzx.mdfc.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -32,7 +35,12 @@ public class ModelService {
         this.hyDao = hyDao;
         this.indexManageModel = indexManageModel;
     }
-
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(10);
+        return taskScheduler;
+    }
     @Scheduled(cron = "${modelCronExpr}")
     public void process() throws IOException {
         long startTime = System.currentTimeMillis();
