@@ -25,7 +25,9 @@ public class HangxinTaxindexLib {
     public String taxLev(String nsrsbh) {
         return hyDao.queryForString("hsyh", "hangxinTax.querytaxLev", nsrsbh);
     }
-
+    public String taxLevBef(String nsrsbh) {
+        return hyDao.queryForString("hsyh", "hangxinTax.querytaxLev", nsrsbh);
+    }
     public String taxStatus(String nsrsbh) {
         String taxStatus = hyDao.queryForString("hsyh", "hangxinTax.querytaxStatus", nsrsbh);
         if ("非正常".equals(taxStatus)) {
@@ -154,6 +156,10 @@ public class HangxinTaxindexLib {
         return Double.toString(taxSalethirtyper);
     }
 
+    public String taxInPaid(Map<String, Object> param) {
+        double taxSalethirtyper = hyDao.queryForDouble("hsyh", "hangxinTax.querytaxInPaid", param);
+        return Double.toString(taxSalethirtyper);
+    }
     public String tax3MIllegal(String nsrsbh) {
         String begindate = CommUtils.getDateOfMonth(-3);
         Map<String, Object> param = new HashMap<>();
@@ -262,6 +268,11 @@ public class HangxinTaxindexLib {
         return Double.toString(ysxsrLast);
     }
     public String tax3MIllegal_unDeal(String nsrsbh) {
+        int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_unDeal", nsrsbh);
+        return Integer.toString(tax3MIllegal_unDeal);
+    }
+
+    public String tax3MIllegal_OverunDeal(String nsrsbh) {
         int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_unDeal", nsrsbh);
         return Integer.toString(tax3MIllegal_unDeal);
     }

@@ -30,10 +30,12 @@ public class IndexManageModel {
 		modelMap.put("taxnsrlx",hangxinTaxindexLib.taxNsrlx(nsrsbh));
 		modelMap.put("taxStatus",hangxinTaxindexLib.taxStatus(nsrsbh));
 		modelMap.put("taxLev",hangxinTaxindexLib.taxLev(nsrsbh));
+		modelMap.put("taxLevBef",hangxinTaxindexLib.taxLevBef(nsrsbh));
 		modelMap.put("over24MTax",hangxinTaxindexLib.oveTax(nsrsbh,24));
 		modelMap.put("over6MTax",hangxinTaxindexLib.oveTax(nsrsbh,6));
 		modelMap.put("oveTax",hangxinTaxindexLib.oveTax(nsrsbh,12));
 		modelMap.put("tax3MIllegal_unDeal",hangxinTaxindexLib.tax3MIllegal_unDeal(nsrsbh));
+		modelMap.put("tax3MIllegal_OverunDeal",hangxinTaxindexLib.tax3MIllegal_OverunDeal(nsrsbh));
 
 		modelMap.put("lasProfit",hangxinTaxindexLib.yearProfit(nsrsbh,1));
 		modelMap.put("befLasYearProfit",hangxinTaxindexLib.yearProfit(nsrsbh,2));

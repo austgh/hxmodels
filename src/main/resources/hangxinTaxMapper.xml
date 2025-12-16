@@ -11,6 +11,14 @@
         limit 1
     </select>
 
+    <select id="querytaxLevBef" parameterType="String" resultType="String">
+        select Xyjb
+        from dwa_base_xyxx
+        where nsrsbh = #{nsrsbh}
+        order by Nd desc
+        limit 1,1
+    </select>
+
     <select id="querytaxStatus" parameterType="String" resultType="String">
         select Nsrztmc
         from dwa_base_djxx
@@ -71,6 +79,15 @@
         and sssqz&lt;#{enddate}
         and rptflg='M'
     </select>
+    <select id="querytaxInPaid" parameterType="map" resultType="double">
+        select sum(ytse)
+        from dwa_base_sbxx
+        where nsrsbh = #{nsrsbh}
+          and zsxmdm = #{zsxmdm}
+          and sssqq>= #{begindate}
+          and sssqz&lt;#{enddate}
+    </select>
+
     <select id="querytaxSale3M" parameterType="map" resultType="double">
         select sum(ysxse)
         from dwa_base_sbxx
@@ -117,6 +134,14 @@
 	    and NSRSBH=#{nsrsbh}
         and TIMESTAMPDIFF(MONTH, DJRQ,sysdate())>=3
 	</select>
+
+    <select id="queryTax3MIllegal_OverunDeal" parameterType="String" resultType="int">
+        select count(1)
+        from dwa_base_wfwzxx
+        where SSWFXWCLZT_DM='38'
+          and NSRSBH=#{nsrsbh}
+          and TIMESTAMPDIFF(MONTH, DJRQ,sysdate())>=3
+    </select>
 
     <select id="queryLasProfit" parameterType="map" resultType="double">
         select 	ifnull(sum(lrze),0) as "lrze"
