@@ -45,6 +45,9 @@ public class IndexManageModel {
 		modelMap.put("tax2YNetAss",hangxinTaxindexLib.tax2YNetAss(nsrsbh));
 		modelMap.put("tax2YPro",hangxinTaxindexLib.tax2YPro(nsrsbh));
 
+		modelMap.put("cancelTimes",hangxinTaxindexLib.cancelTimes(nsrsbh));
+		modelMap.put("cancelAmount",hangxinTaxindexLib.cancelAmount(nsrsbh));
+
 		//最近一笔增值税的结束日期 sssqz  2023-01-31
 		String volumeUpDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyDate",nsrsbh);
 		log.info("获取申报表的最新一期增值税数据的截止日期为:{}", volumeUpDate);

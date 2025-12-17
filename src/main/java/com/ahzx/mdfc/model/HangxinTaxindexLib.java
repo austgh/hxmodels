@@ -36,6 +36,8 @@ public class HangxinTaxindexLib {
             return "N";
         }
     }
+
+
     public String taxNsrlx(String nsrsbh) {
         int taxNsrlx = hyDao.queryForInt("hsyh", "hangxinTax.querytaxNsrlx", nsrsbh);
         if (taxNsrlx<1) {
@@ -276,4 +278,24 @@ public class HangxinTaxindexLib {
         int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_unDeal", nsrsbh);
         return Integer.toString(tax3MIllegal_unDeal);
     }
+    /*
+    *
+     * 近一年红冲、作废发票次数
+     */
+    public String cancelTimes(String nsrsbh) {
+        int cancelTimes = hyDao.queryForInt("hsyh", "hangxinTax.queryCancelTimes", nsrsbh);
+        return Integer.toString(cancelTimes);
+    }
+
+    /*
+     *
+     * 近一年红冲和作废的金额
+     */
+    public String cancelAmount(String nsrsbh) {
+        double cancelTimes = hyDao.queryForDouble("hsyh", "hangxinTax.queryCancelAmount", nsrsbh);
+        return  Double.toString(cancelTimes);
+    }
+
+
+
 }
