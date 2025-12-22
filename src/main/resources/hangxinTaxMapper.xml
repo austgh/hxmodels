@@ -269,8 +269,8 @@
 
     <select id="queryCancelTimes" parameterType="string" resultType="int">
         select count(1)
-        from  dwa_base_hcfp a
-        where xfsbh=#{nsrsbh}
+        from  HSYH_FPXX_HCFPHZ a
+        where nsrsbh=#{nsrsbh}
         and TIMESTAMPDIFF(MONTH, kprq,sysdate())<=13
         and TIMESTAMPDIFF(MONTH, kprq,sysdate())>0
         and zfbz='Y'
@@ -278,8 +278,8 @@
 
     <select id="queryCancelAmount" parameterType="string" resultType="double">
         select  ifnull(sum(je)+sum(se),0)
-        from  dwa_base_hcfp a
-        where xfsbh=#{nsrsbh}
+        from  HSYH_FPXX_HCFPHZ a
+        where nsrsbh=#{nsrsbh}
         and TIMESTAMPDIFF(MONTH, kprq,sysdate())<=13
         and TIMESTAMPDIFF(MONTH, kprq,sysdate())>0
         and zfbz='Y'

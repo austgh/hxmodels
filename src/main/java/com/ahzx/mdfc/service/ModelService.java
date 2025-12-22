@@ -451,6 +451,17 @@ public class ModelService {
             score += 20;
             result.append("AP30,");
         }
+        /*
+        *新增逻辑
+         */
+        String cancelAmount = modelMap.get("cancelAmount") == null ? "0" : modelMap.get("cancelAmount").toString();
+        double cancelAmountValue = Double.parseDouble(cancelAmount);
+        if(taxSalethirtyperValue!=0&& Math.abs(cancelAmountValue)/taxSalethirtyperValue>0.05){
+            score += 30;
+            result.append("AP35,");
+        }
+
+
 
         if ("N".equals(ifkjedai) && taxSalethirtyperValue < 20000000 && ("516".equals(hytypecode) || "5164".equals(hytypecode) || "5165".equals(hytypecode))) {
             score += 500;
@@ -545,6 +556,11 @@ public class ModelService {
             score += 50;
             result.append("AP33,");
         }
+
+
+
+
+
 
         String befLasYearProfit = modelMap.get("befLasYearProfit") == null ? "0" :
                 modelMap.get("befLasYearProfit").toString();
