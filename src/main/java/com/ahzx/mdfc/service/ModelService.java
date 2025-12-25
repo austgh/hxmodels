@@ -288,7 +288,7 @@ public class ModelService {
 
         double befLasYearProfitValue = Double.parseDouble(befLasYearProfit);
         double lasProfitValue = Double.parseDouble(lasProfit);
-        if ("Y".equals(xedoldcust)) {
+        if ("Y".equals(xedoldcust)&&befLasYearProfitValue < 0 && lasProfitValue < 0) {
             result.append("AP38,");
         } else if (befLasYearProfitValue < 0 && lasProfitValue < 0) {
             score += 30;
@@ -386,7 +386,14 @@ public class ModelService {
             result.append("AP26,");
             score += 500;
         }
-
+        /*
+         *省内企业纳税信用等级由A下降到B/M或B下降到M，省外由A下降到B，模型触发提示
+         *
+         */
+        String taxLevBef = modelMap.get("taxLevBef") == null ? "" : modelMap.get("taxLevBef").toString();
+        if (("A".equals(taxLev) && ("B".equals(taxLevBef) || "M".equals(taxLevBef))) || ("B".equals(taxLev) && "M".equals(taxLevBef))) {
+            result.append("AP140,");
+        }
         String taxNsrlx = modelMap.get("taxnsrlx") == null ? "N" : modelMap.get("taxnsrlx").toString();
         if ("Y".equals(taxNsrlx)) {
             result.append("BL69,");
@@ -452,11 +459,20 @@ public class ModelService {
             result.append("AP30,");
         }
         /*
+         *新增逻辑 2025/12/22
+         */
+        String cancelTimes = modelMap.get("cancelTimes") == null ? "0" : modelMap.get("cancelTimes").toString();
+        double cancelTimesValue = Double.parseDouble(cancelTimes);
+        if(cancelTimesValue>=12){
+            score += 30;
+            result.append("AP34,");
+        }
+        /*
         *新增逻辑
          */
         String cancelAmount = modelMap.get("cancelAmount") == null ? "0" : modelMap.get("cancelAmount").toString();
         double cancelAmountValue = Double.parseDouble(cancelAmount);
-        if(taxSalethirtyperValue!=0&& Math.abs(cancelAmountValue)/taxSalethirtyperValue>0.05){
+        if(taxSalethirtyperValue!=0&& Math.abs(cancelAmountValue/taxSalethirtyperValue)>0.05){
             score += 30;
             result.append("AP35,");
         }
@@ -482,58 +498,92 @@ public class ModelService {
         double mainBusDownnowValue = Double.parseDouble(mainBusDownnow);
         double mainBusDownlastValue = Double.parseDouble(mainBusDownlast);
         boolean less_than_20000000 = (taxSalethirtyperValue >= 0 && taxSalethirtyperValue < 20000000);
-        boolean between_20000000_and_50000000 = (taxSalethirtyperValue >= 20000000 && taxSalethirtyperValue < 50000000);
-        boolean more_than_50000000 = taxSalethirtyperValue >= 50000000;
+        boolean between_20000000_and_50000000 =
+                (taxSalethirtyperValue >= 20000000 && taxSalethirtyperValue <= 50000000);
+        boolean more_than_50000000 = taxSalethirtyperValue > 50000000;
+        boolean less_than_30000000 = (taxSalethirtyperValue >= 0 && taxSalethirtyperValue < 30000000);
+        boolean between_30000000_and_50000000 = taxSalethirtyperValue >= 30000000 && taxSalethirtyperValue < 50000000;
         boolean less_than_50000000 = (taxSalethirtyperValue >= 0 && taxSalethirtyperValue < 50000000);
-        boolean between_50000000_and_100000000 = taxSalethirtyperValue >= 50000000 && taxSalethirtyperValue < 100000000;
-        boolean more_than_100000000 = taxSalethirtyperValue >= 100000000;
+        boolean between_50000000_and_100000000 =
+                taxSalethirtyperValue >= 50000000 && taxSalethirtyperValue <= 100000000;
+        boolean more_than_100000000 = taxSalethirtyperValue > 100000000;
 
+        boolean less_than_0_3 = mainBusDownnowValue < 0.3 * mainBusDownlastValue;
         boolean less_than_0_5 = mainBusDownnowValue < 0.5 * mainBusDownlastValue;
         boolean between_0_6_and_0_7 =
-                mainBusDownnowValue < mainBusDownlastValue * 0.7 && mainBusDownnowValue >= mainBusDownlastValue * 0.6;
+                mainBusDownnowValue <= mainBusDownlastValue * 0.7 && mainBusDownnowValue > mainBusDownlastValue * 0.6;
         boolean between_0_5_and_0_6 =
-                mainBusDownnowValue < mainBusDownlastValue * 0.6 && mainBusDownnowValue >= mainBusDownlastValue * 0.5;
+                mainBusDownnowValue <= mainBusDownlastValue * 0.6 && mainBusDownnowValue > mainBusDownlastValue * 0.5;
+        boolean between_0_3_and_0_5 =
+                mainBusDownnowValue <= mainBusDownlastValue * 0.5 && mainBusDownnowValue >= mainBusDownlastValue * 0.3;
 
         if ("Y".equals(xedoldcust)) {
-            if (less_than_20000000 && less_than_0_5) {
-                score += 220;
-                result.append("AP37,");
-            } else if (between_20000000_and_50000000 && less_than_0_5) {
-                score += 200;
-                result.append("AP37,");
-            } else if (more_than_50000000 && less_than_0_5) {
+            if (less_than_20000000 && between_0_3_and_0_5) {
                 score += 170;
                 result.append("AP37,");
-            } else if ((taxSalethirtyperValue / 4 * 0.3 >= taxSaletenperValue) && taxSalethirtyperValue <= 20000000) {
+            }else if (less_than_20000000 && less_than_0_3) {
+                score += 220;
+                result.append("AP37,");
+            }else if (between_20000000_and_50000000 && between_0_3_and_0_5) {
+                score += 120;
+                result.append("AP37,");
+            }  else if (between_20000000_and_50000000 && less_than_0_3) {
+                score += 200;
+                result.append("AP37,");
+            }else if (more_than_50000000 && between_0_3_and_0_5) {
+                score += 80;
+                result.append("AP37,");
+            } else if (more_than_50000000 && less_than_0_3) {
+                score += 170;
+                result.append("AP37,");
+            } else if ((taxSalethirtyperValue / 4 * 0.5 >= taxSaletenperValue)) {
                 score += 20;
                 result.append("AP31,");
             }
         } else {
-            if (less_than_50000000 && between_0_6_and_0_7) {
+            if (less_than_30000000 && between_0_6_and_0_7) {
                 score += 150;
                 result.append("AP37,");
-            } else if (less_than_50000000 && between_0_5_and_0_6) {
+            } else if (less_than_30000000 && between_0_5_and_0_6) {
                 score += 200;
                 result.append("AP37,");
-            } else if (less_than_50000000 && less_than_0_5) {
+            } else if (less_than_30000000 && less_than_0_5) {
                 score += 250;
                 result.append("AP37,");
-            } else if (between_50000000_and_100000000 && between_0_6_and_0_7) {
-                score += 120;
+            }else if(between_30000000_and_50000000 && between_0_6_and_0_7){
+                score += 100;
+                result.append("AP37,");
+            }else if(between_30000000_and_50000000 && between_0_5_and_0_6){
+                score += 150;
+                result.append("AP37,");
+            }else if(between_30000000_and_50000000 && between_0_3_and_0_5){
+                score += 200;
+                result.append("AP37,");
+            }else if(between_30000000_and_50000000 && less_than_0_3){
+                score += 250;
+                result.append("AP37,");
+            }else if (between_50000000_and_100000000 && between_0_6_and_0_7) {
+                score += 70;
                 result.append("AP37,");
             } else if (between_50000000_and_100000000 && between_0_5_and_0_6) {
+                score += 120;
+                result.append("AP37,");
+            }else if (between_50000000_and_100000000 && between_0_3_and_0_5) {
                 score += 170;
                 result.append("AP37,");
-            } else if (between_50000000_and_100000000 && less_than_0_5) {
+            } else if (between_50000000_and_100000000 && less_than_0_3) {
                 score += 220;
                 result.append("AP37,");
             } else if (more_than_100000000 && between_0_6_and_0_7) {
-                score += 100;
+                score += 50;
                 result.append("AP37,");
             } else if (more_than_100000000 && between_0_5_and_0_6) {
+                score += 100;
+                result.append("AP37,");
+            } else if (more_than_100000000 && between_0_3_and_0_5) {
                 score += 150;
                 result.append("AP37,");
-            } else if (more_than_100000000 && less_than_0_5) {
+            }else if (more_than_100000000 && less_than_0_3) {
                 score += 200;
                 result.append("AP37,");
             } else if ((taxSalethirtyperValue / 4 * 0.5 >= taxSaletenperValue)) {
@@ -568,9 +618,11 @@ public class ModelService {
 
         double befLasYearProfitValue = Double.parseDouble(befLasYearProfit);
         double lasProfitValue = Double.parseDouble(lasProfit);
-        if ("Y".equals(xedoldcust)) {
-            result.append("AP38,");
-        } else if (befLasYearProfitValue < 0 && lasProfitValue < 0) {
+        /*
+        1.若企业前年利润总额（befLasYearProfit）或上年度利润总额（lasProfit）缺失，则非触发项；
+        2.若企业前年利润总额及上年度利润总额皆小于等于0，则为触发项，分值30分；
+         */
+        if (befLasYearProfitValue < 0 && lasProfitValue < 0) {
             score += 30;
             result.append("AP38,");
         }
@@ -578,12 +630,20 @@ public class ModelService {
         String tax3MIllegal_unDeal = modelMap.get("tax3MIllegal_unDeal") == null ? "0" : modelMap.get(
                 "tax3MIllegal_unDeal").toString();
         String tax3MIllegal = modelMap.get("tax3MIllegal") == null ? "0" : modelMap.get("tax3MIllegal").toString();
+        /*
+            1.宁波续贷户：近三个月有税务违法记录 100分
+            2.其他地区续贷：未处理完毕，500分，处理完毕，不扣分
+            3.其他地区新客户：未处理完毕，500分，处理完毕，100分
+         */
         if ("Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal_unDeal) > 0) {
             score += 500;
             result.append("AP119,");
         }
         if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal) > 0) {
             score += 500;
+            result.append("AP119,");
+        } else if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal_unDeal) > 0) {
+            score += 100;
             result.append("AP119,");
         }
 
@@ -619,18 +679,27 @@ public class ModelService {
         double ysxsr = Double.parseDouble(YSXSRBef) + Double.parseDouble(YSXSRLast);
         double tax2YProValue = Double.parseDouble(tax2YPro);
         double tax2YNetAssValue = Double.parseDouble(tax2YNetAss);
-        if ((!"Y".equals(xedoldcust) || !"N".equals(ifkjedai))) {
-            if ("N".equals(ifkjedai) && (tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.15 * ysxsr)) {
-                score += 500;
-                result.append("AP122,");
-            } else if ("Y".equals(ifkjedai) && (tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 0.15 * ysxsr) && "Y".equals(xedoldcust)) {
-                score += 500;
-                result.append("AP122,");
-            } else if ("Y".equals(ifkjedai) && (tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.15 * ysxsr)) {
+        //if ((!"Y".equals(xedoldcust) || !"N".equals(ifkjedai))) {
+        //    if ("N".equals(ifkjedai) && (tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.15 * ysxsr)) {
+        //        score += 500;
+        //        result.append("AP122,");
+        //    } else if ("Y".equals(ifkjedai) && (tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 0.15 * ysxsr) && "Y".equals(xedoldcust)) {
+        //        score += 500;
+        //        result.append("AP122,");
+        //    } else if ("Y".equals(ifkjedai) && (tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.15 * ysxsr)) {
+        //        score += 500;
+        //        result.append("AP122,");
+        //    }
+        //}
+        //新客户
+        if ((!"Y".equals(xedoldcust)) {
+            if ((tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.05 * ysxsr)) {
                 score += 500;
                 result.append("AP122,");
             }
         }
+
+
 
         resultMap.put("admtrsltsts", "C");
         if (score <= 260) {
