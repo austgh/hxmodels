@@ -275,7 +275,7 @@ public class HangxinTaxindexLib {
     }
 
     public String tax3MIllegal_OverunDeal(String nsrsbh) {
-        int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_unDeal", nsrsbh);
+        int tax3MIllegal_unDeal = hyDao.queryForInt("hsyh", "hangxinTax.queryTax3MIllegal_OverunDeal", nsrsbh);
         return Integer.toString(tax3MIllegal_unDeal);
     }
     /*
