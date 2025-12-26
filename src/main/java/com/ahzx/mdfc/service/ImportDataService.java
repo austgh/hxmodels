@@ -78,6 +78,7 @@ public class ImportDataService {
 				map.put("xedoldcust", params[6]);
 				map.put("inputtime", CommUtils.getDate());
 				map.put("batchdate", date);
+				//map.put("businesstype", params[7]);
 				requstList.add(map);
 				if(requstList.size()>=100){
 					saveDate(requstList, date);

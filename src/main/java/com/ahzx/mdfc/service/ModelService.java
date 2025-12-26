@@ -44,7 +44,7 @@ public class ModelService {
         log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
-        if(date.compareTo("20270630")>0){
+        if(date.compareTo("20271231")>0){
             return;
         }
 
@@ -73,15 +73,22 @@ public class ModelService {
                 log.info("【检索到需要处理的企业为{}】", entname);
                 serialno = (String) entInfo.get("serialno");
                 String nsrsbh = (String) entInfo.get("nsrsbh");
+                String businessType = (String) entInfo.get("businesstype");
 
                 //加工指标
                 Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh,entInfo);
                 //处理结果
-                Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
-                //入库操作后置  两种结果需要结合
+                //非科技e贷
+                if(!"2".equals(businessType)){
+                    Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
+                    //写文件中
+                    writeData(bufferwriter, resultMap, log);
+                }else{
+                    //入库操作后置  两种结果需要结合
+                    Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
+                    writeDataKjed(bufferwriter, resultMap, log);
+                }
 
-                //写文件中
-                writeData(bufferwriter, resultMap, log);
             } catch (Exception e) {
                 saveExceptionInfo(entname, serialno, e);
             } finally {
@@ -103,7 +110,14 @@ public class ModelService {
 
     static void writeData(BufferedWriter bufferwriter, Map<String, Object> resultMap, Logger log) throws IOException {
         StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score"));
+        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";1");
+        log.info("数据为:{}", stringBuffer);
+        bufferwriter.write(stringBuffer.toString());
+        bufferwriter.newLine();
+    }
+    static void writeDataKjed(BufferedWriter bufferwriter, Map<String, Object> resultMap, Logger log) throws IOException {
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";2;").append(resultMap.get("saleamount")).append(";").append(resultMap.get("ratio"));
         log.info("数据为:{}", stringBuffer);
         bufferwriter.write(stringBuffer.toString());
         bufferwriter.newLine();

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,7 +91,16 @@ public class IndexManageModel {
 			modelMap.put("taxsale3M",hangxinTaxindexLib.taxsale3M(param3M));
 			modelMap.put("taxSaletenper",hangxinTaxindexLib.taxSaletenper(param3M));
 
-
+			BigDecimal ysxse12MValue=new BigDecimal(String.valueOf(modelMap.get("YSXSE12M")));
+			BigDecimal ysxse24mValue=new BigDecimal(String.valueOf(modelMap.get("ysxse24m")));
+			modelMap.put("growthRate","0.00");
+			if(ysxse24mValue.compareTo(new BigDecimal("0"))!=0){
+				 BigDecimal growthRate = (ysxse12MValue.subtract(ysxse24mValue)).divide(ysxse24mValue);
+				growthRate.setScale(2,6);
+				modelMap.put("growthRate",growthRate);
+			}
+			ysxse12MValue.setScale(2,6);
+			modelMap.put("saleAmount",ysxse12MValue);
 		}
 		/*获取申报表的最新一期申报数据的截止日期*/
 		String lastRepartDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyIncomeTaxDate",nsrsbh);
