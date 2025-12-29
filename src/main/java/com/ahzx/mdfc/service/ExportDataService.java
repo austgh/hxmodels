@@ -40,7 +40,7 @@ public class ExportDataService {
         BufferedWriter bufferwriter;
         bufferwriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()), StandardCharsets.UTF_8));
         int count = hyDao.queryForInt("mapping/hshy", "common.queryResultCount", date);
-        if (count < 10000) {
+        if (count < 100000) {
             final List<Map<String, Object>> resultList = hyDao.queryForList("mapping/hshy", "common.queryResultInfo",
                     date);
             for (Map<String, Object> stringObjectMap : resultList) {
