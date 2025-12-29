@@ -86,7 +86,7 @@ public class ModelService {
                 }else{
                     //入库操作后置  两种结果需要结合
                     Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
-                    writeDataKjed(bufferwriter, resultMap, log);
+                    writeDataKjed(bufferwriter, kjedResultMap, log);
                 }
 
             } catch (Exception e) {
@@ -706,7 +706,7 @@ public class ModelService {
         //    }
         //}
         //新客户
-        if ((!"Y".equals(xedoldcust)) {
+        if (!"Y".equals(xedoldcust)) {
             if ((tax2YProValue < -500000 || tax2YProValue < -0.1 * ysxsr) && (tax2YNetAssValue < 400000 || tax2YNetAssValue < 0.05 * ysxsr)) {
                 score += 500;
                 result.append("AP122,");

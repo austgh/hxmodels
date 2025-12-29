@@ -75,7 +75,8 @@
 			   a.ifkjedai   as "ifkjedai",
 			   a.hytype     as "hytype",
 			   a.hytypecode as "hytypecode",
-			   a.businesstype       as "businesstype",
+			   a.businesstype1       as "businesstype1",
+			   a.businesstype2       as "businesstype2",
 			   a.xedoldcust as "xedoldcust"
 		from hsyh_qymd a
 			left join hsyh_trans_log b
@@ -91,7 +92,7 @@
 
 	<insert id="insertData" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype1,businesstype2)
 		values
 		(	#{serialno},
 			#{nsrmc},
@@ -102,13 +103,14 @@
 			#{xedoldcust},
 			#{batchdate},
 			#{inputtime},
-			#{businesstype}
+			#{businesstype1},
+			#{businesstype2}
 		)
 	</insert>
 
 	<insert id="insertData1" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype1,businesstype2)
 		select a.* from
 		(
 		<foreach collection="list" index="index" item="item" separator="union all">
@@ -122,7 +124,8 @@
 			#{item.xedoldcust} as "xedoldcust",
 			#{batchdate} as "batchdate",
 			#{item.inputtime} as "inputtime",
-			#{item.businesstype} as "businesstype"
+			#{item.businesstype1} as "businesstype1",
+			#{item.businesstype2} as "businesstype2"
 			from dual
 		</foreach>
 		) a
