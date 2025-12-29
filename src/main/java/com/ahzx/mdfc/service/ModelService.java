@@ -111,14 +111,14 @@ public class ModelService {
 
     static void writeData(BufferedWriter bufferwriter, Map<String, Object> resultMap, Logger log) throws IOException {
         StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";1;0;").append(resultMap.get("ratio")).append(";").append(resultMap.get("saleamount"));
+        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";1;0;").append(resultMap.get("growthRate")).append(";").append(resultMap.get("saleAmount"));
         log.info("数据为:{}", stringBuffer);
         bufferwriter.write(stringBuffer.toString());
         bufferwriter.newLine();
     }
     static void writeDataKjed(BufferedWriter bufferwriter, Map<String, Object> resultMap, Logger log) throws IOException {
         StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";0;1;").append(resultMap.get("ratio")).append(";").append(resultMap.get("saleamount"));
+        stringBuffer.append(resultMap.get("serialno")).append(";").append(resultMap.get("nsrmc")).append(";").append(resultMap.get("nsrsbh")).append(";").append(resultMap.get("inputtime")).append(";").append(resultMap.get("rulecd")).append(";").append(resultMap.get("score")).append(";0;1;").append(resultMap.get("growthRate")).append(";").append(resultMap.get("saleAmount"));
         log.info("数据为:{}", stringBuffer);
         bufferwriter.write(stringBuffer.toString());
         bufferwriter.newLine();
@@ -126,6 +126,7 @@ public class ModelService {
 
     private Map<String, Object> getModelRule(Map<String, Object> modelMap, Map<String, Object> entInfo,String date) {
         Map<String, Object> resultMap = new HashMap<>(entInfo);
+        resultMap.putAll(modelMap);
         String ifkjedai = entInfo.get("ifkjedai") == null ? "N" : (String) entInfo.get("ifkjedai");
         String hytype = (String) entInfo.get("hytype");
         String hytypecode = (String) entInfo.get("hytypecode");
@@ -390,6 +391,7 @@ public class ModelService {
     private Map<String, Object> getKjedModelRule(Map<String, Object> modelMap, Map<String, Object> entInfo,
                                                  String date) {
         Map<String, Object> resultMap = new HashMap<>(entInfo);
+        resultMap.putAll(modelMap);
         String ifkjedai = entInfo.get("ifkjedai") == null ? "N" : (String) entInfo.get("ifkjedai");
         String hytype = (String) entInfo.get("hytype");
         String hytypecode = (String) entInfo.get("hytypecode");
