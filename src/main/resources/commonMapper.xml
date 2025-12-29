@@ -79,7 +79,7 @@
 			   a.businesstype2       as "businesstype2",
 			   a.xedoldcust as "xedoldcust"
 		from hsyh_qymd a
-			left join hsyh_trans_log b
+		left join hsyh_trans_log b
 		on a.serialno = b.serialno and a.batchdate=b.batchdate
 		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday}
 		order by a.inputtime desc
@@ -137,7 +137,11 @@
 			   a.nsrsbh     as "nsrsbh",
 			   a.inputtime  as "inputtime",
 			   a.rulecd   	as "rulecd",
-			   a.score     as "score"
+			   a.score     as "score",
+			   a.businesstype1 as "businesstype1",
+			   a.businesstype2 as "businesstype2",
+			   a.ratio as "ratio",
+			   a.saleamount as "saleamount"
 		from hsyh_trans_log a
 		where batchdate = #{date}
 		order by a.inputtime desc
