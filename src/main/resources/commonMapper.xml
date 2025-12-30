@@ -31,6 +31,18 @@
 			<if test="batchdate != null and batchdate != ''">
 				batchdate,
 			</if>
+			<if test="businesstype1 != null and businesstype1 != ''">
+				businesstype1,
+			</if>
+			<if test="businesstype2 != null and businesstype2 != ''">
+				businesstype2,
+			</if>
+			<if test="ratio != null and ratio != ''">
+				ratio,
+			</if>
+			<if test="saleamount != null and saleamount != ''">
+				saleamount,
+			</if>
 			<if test="rulecd != null and rulecd != ''">
 				rulecd
 			</if>
@@ -59,6 +71,18 @@
 			</if>
 			<if test="batchdate != null and batchdate != ''">
 				#{batchdate},
+			</if>
+			<if test="businesstype1 != null and businesstype1 != ''">
+				#{businesstype1},
+			</if>
+			<if test="businesstype2 != null and businesstype2 != ''">
+				#{businesstype2},
+			</if>
+			<if test="ratio != null and ratio != ''">
+				#{growthRate},
+			</if>
+			<if test="saleamount != null and saleamount != ''">
+				#{saleAmount},
 			</if>
 			<if test="rulecd != null and rulecd != ''">
 				#{rulecd}

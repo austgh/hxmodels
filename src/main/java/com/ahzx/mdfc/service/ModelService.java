@@ -384,7 +384,7 @@ public class ModelService {
         resultMap.put("rulecd", result.toString());
         resultMap.put("status", "1");
         resultMap.put("batchdate", date);
-        //hyDao.insert("hsyh", "common.insertHsyhTransLog", resultMap);
+        hyDao.insert("hsyh", "common.insertHsyhTransLog", resultMap);
         return resultMap;
     }
 

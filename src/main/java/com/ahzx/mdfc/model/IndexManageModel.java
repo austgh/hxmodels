@@ -52,7 +52,8 @@ public class IndexManageModel {
 		//最近一笔增值税的结束日期 sssqz  2023-01-31
 		String volumeUpDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyDate",nsrsbh);
 		log.info("获取申报表的最新一期增值税数据的截止日期为:{}", volumeUpDate);
-
+		modelMap.put("growthRate","0.00");
+		modelMap.put("saleAmount","0.00");
 		if(!CommUtils.isEmptyStr(volumeUpDate)&& !"1970-01-01".equals(volumeUpDate)){
 			Date date=new SimpleDateFormat("yyyyy-MM-dd").parse(volumeUpDate);
 			//最近一年内
@@ -96,11 +97,9 @@ public class IndexManageModel {
 			modelMap.put("growthRate","0.00");
 			if(ysxse24mValue.compareTo(new BigDecimal("0"))!=0){
 				 BigDecimal growthRate = (ysxse12MValue.subtract(ysxse24mValue)).divide(ysxse24mValue);
-				growthRate.setScale(2,6);
-				modelMap.put("growthRate",growthRate);
+				modelMap.put("growthRate",growthRate.setScale(2,6));
 			}
-			ysxse12MValue.setScale(2,6);
-			modelMap.put("saleAmount",ysxse12MValue);
+			modelMap.put("saleAmount",ysxse12MValue.setScale(2,6));
 		}
 		/*获取申报表的最新一期申报数据的截止日期*/
 		String lastRepartDate=hyDao.queryForString("hsyh","hangxinTax.queryRecentlyIncomeTaxDate",nsrsbh);
