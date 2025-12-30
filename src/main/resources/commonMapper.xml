@@ -37,10 +37,10 @@
 			<if test="businesstype2 != null and businesstype2 != ''">
 				businesstype2,
 			</if>
-			<if test="ratio != null and ratio != ''">
+			<if test="growthRate != null and growthRate != ''">
 				ratio,
 			</if>
-			<if test="saleamount != null and saleamount != ''">
+			<if test="saleAmount != null and saleAmount != ''">
 				saleamount,
 			</if>
 			<if test="rulecd != null and rulecd != ''">
@@ -78,10 +78,10 @@
 			<if test="businesstype2 != null and businesstype2 != ''">
 				#{businesstype2},
 			</if>
-			<if test="ratio != null and ratio != ''">
+			<if test="growthRate != null and growthRate != ''">
 				#{growthRate},
 			</if>
-			<if test="saleamount != null and saleamount != ''">
+			<if test="saleAmount != null and saleAmount != ''">
 				#{saleAmount},
 			</if>
 			<if test="rulecd != null and rulecd != ''">
