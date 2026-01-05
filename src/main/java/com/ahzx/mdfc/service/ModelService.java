@@ -408,7 +408,7 @@ public class ModelService {
          *
          */
         String taxLevBef = modelMap.get("taxLevBef") == null ? "" : modelMap.get("taxLevBef").toString();
-        if (("A".equals(taxLev) && ("B".equals(taxLevBef) || "M".equals(taxLevBef))) || ("B".equals(taxLev) && "M".equals(taxLevBef))) {
+        if (("A".equals(taxLevBef) && ("B".equals(taxLev) || "M".equals(taxLev))) || ("B".equals(taxLevBef) && "M".equals(taxLev))) {
             result.append("AP140,");
         }
         String taxNsrlx = modelMap.get("taxnsrlx") == null ? "N" : modelMap.get("taxnsrlx").toString();
@@ -646,7 +646,8 @@ public class ModelService {
 
         String tax3MIllegal_unDeal = modelMap.get("tax3MIllegal_unDeal") == null ? "0" : modelMap.get(
                 "tax3MIllegal_unDeal").toString();
-        String tax3MIllegal = modelMap.get("tax3MIllegal") == null ? "0" : modelMap.get("tax3MIllegal").toString();
+        //String tax3MIllegal = modelMap.get("tax3MIllegal") == null ? "0" : modelMap.get("tax3MIllegal").toString();
+        String tax3MIllegal_OverunDeal = modelMap.get("tax3MIllegal_OverunDeal") == null ? "0" : modelMap.get("tax3MIllegal_OverunDeal").toString();
         /*
             1.宁波续贷户：近三个月有税务违法记录 100分
             2.其他地区续贷：未处理完毕，500分，处理完毕，不扣分
@@ -656,12 +657,12 @@ public class ModelService {
             score += 500;
             result.append("AP119,");
         }
-        if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal) > 0) {
+        if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal_unDeal) > 0) {
             score += 500;
             result.append("AP119,");
-        } else if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal_unDeal) > 0) {
+        } else if (!"Y".equals(xedoldcust) && Double.parseDouble(tax3MIllegal_OverunDeal) > 0) {
             score += 100;
-            result.append("AP119,");
+            result.append("AP119_1,");
         }
 
         String YSXSRLast = modelMap.get("YSXSRLast") == null ? "0" : modelMap.get("YSXSRLast").toString();
