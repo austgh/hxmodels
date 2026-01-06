@@ -720,7 +720,7 @@ public class ModelService {
 
 
         resultMap.put("admtrsltsts", "C");
-        if (score <= 260) {
+        if (score <= 300) {
             resultMap.put("admtrsltsts", "A");
         }
         String resultStr=result.toString();
