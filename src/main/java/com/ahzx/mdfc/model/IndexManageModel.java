@@ -91,12 +91,19 @@ public class IndexManageModel {
 
 			modelMap.put("taxsale3M",hangxinTaxindexLib.taxsale3M(param3M));
 			modelMap.put("taxSaletenper",hangxinTaxindexLib.taxSaletenper(param3M));
+			BigDecimal ysxse12MValue=new BigDecimal("0");
+			if(!CommUtils.isEmptyStr(String.valueOf(modelMap.get("YSXSE12M")))){
+				ysxse12MValue=new BigDecimal(String.valueOf(modelMap.get("YSXSE12M")));
+			}
 
-			BigDecimal ysxse12MValue=new BigDecimal(String.valueOf(modelMap.get("YSXSE12M")));
-			BigDecimal ysxse24mValue=new BigDecimal(String.valueOf(modelMap.get("ysxse24m")));
+			BigDecimal ysxse24mValue=new BigDecimal("0");
+			if(!CommUtils.isEmptyStr(String.valueOf(modelMap.get("ysxse24m")))){
+				ysxse24mValue=new BigDecimal(String.valueOf(modelMap.get("ysxse24m")));
+			}
 			modelMap.put("growthRate","0.00");
+			log.info("去年销售额为:{},前年销售额为:{}", ysxse12MValue, ysxse24mValue);
 			if(ysxse24mValue.compareTo(new BigDecimal("0"))!=0){
-				 BigDecimal growthRate = (ysxse12MValue.subtract(ysxse24mValue)).divide(ysxse24mValue);
+				 BigDecimal growthRate = (ysxse12MValue.subtract(ysxse24mValue)).divide(ysxse24mValue,2,6);
 				modelMap.put("growthRate",growthRate.setScale(2,6));
 			}
 			modelMap.put("saleAmount",ysxse12MValue.setScale(2,6));
