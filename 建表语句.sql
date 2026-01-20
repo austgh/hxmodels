@@ -393,4 +393,4 @@ ALTER TABLE hsyh_qymd ALTER COLUMN businesstype2 SET DEFAULT '0';
 ALTER TABLE hsyh_trans_log ADD businesstype1 varchar(10) comment '业务类型 1:信e贷模型';
 ALTER TABLE hsyh_trans_log ADD businesstype2 varchar(10) comment '业务类型 1:科创e贷模型';
 ALTER TABLE hsyh_trans_log ADD ratio varchar(10) comment '增长率';
-ALTER TABLE hsyh_trans_log ADD saleamount varchar(10) comment '销售收入区间值';
+ALTER TABLE hsyh_trans_log ADD saleamount varchar(30) comment '销售收入区间值';

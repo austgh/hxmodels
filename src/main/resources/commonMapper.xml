@@ -105,7 +105,26 @@
 		from hsyh_qymd a
 		left join hsyh_trans_log b
 		on a.serialno = b.serialno and a.batchdate=b.batchdate
-		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday}
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype1='1'
+		order by a.inputtime desc
+	</select>
+
+	<select id="queryTodoListInfo1" parameterType="hashmap" resultType="map">
+		select a.serialno   as "serialno",
+			   a.nsrmc      as "nsrmc",
+			   a.nsrsbh     as "nsrsbh",
+			   a.flag       as "flag",
+			   a.inputtime  as "inputtime",
+			   a.ifkjedai   as "ifkjedai",
+			   a.hytype     as "hytype",
+			   a.hytypecode as "hytypecode",
+			   a.businesstype1       as "businesstype1",
+			   a.businesstype2       as "businesstype2",
+			   a.xedoldcust as "xedoldcust"
+		from hsyh_qymd a
+				 left join hsyh_trans_log b
+						   on a.serialno = b.serialno and a.batchdate=b.batchdate
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype2='1'
 		order by a.inputtime desc
 	</select>
 

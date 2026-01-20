@@ -22,13 +22,13 @@ import java.util.Map;
  * @date 2023年07月2023/7/25日15:54
  */
 @Service
-public class ModelService {
-    private final Logger log = LoggerFactory.getLogger(ModelService.class);
+public class KjedModelService {
+    private final Logger log = LoggerFactory.getLogger(KjedModelService.class);
     private final HyDaoImpl hyDao;
 
     IndexManageModel indexManageModel;
 
-    public ModelService(HyDaoImpl hyDao, IndexManageModel indexManageModel) {
+    public KjedModelService(HyDaoImpl hyDao, IndexManageModel indexManageModel) {
         this.hyDao = hyDao;
         this.indexManageModel = indexManageModel;
     }
@@ -48,13 +48,13 @@ public class ModelService {
             return;
         }
 
-        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
+        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo1", yesterday);
         if(CommUtils.isEmptyList(todoList)){
             log.info("{}没有对应的数据需要导出", date);
             return;
         }
         //文件路径
-        String filePath = "./hxData/output/" + date + "/xed/result.csv";
+        String filePath = "./hxData/output/" + date + "/kjed/result.csv";
         File fileName = getFile(date, filePath);
         if (fileName == null) {
             return;
@@ -99,7 +99,7 @@ public class ModelService {
         }
         bufferwriter.close();
         log.info("文件写入成功");
-        String successFlag = "./hxData/output/" + date + "/xed/success.ok";
+        String successFlag = "./hxData/output/" + date + "/kjed/success.ok";
         File fileSuccess = new File(successFlag);
         if (fileSuccess.createNewFile()) {
             log.info("标志文件创建成功！");
