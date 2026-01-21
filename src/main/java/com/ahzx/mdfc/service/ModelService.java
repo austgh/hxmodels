@@ -47,57 +47,54 @@ public class ModelService {
         if(date.compareTo("20271231")>0){
             return;
         }
-
-        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
-        if(CommUtils.isEmptyList(todoList)){
-            log.info("{}没有对应的数据需要导出", date);
-            return;
-        }
         //文件路径
         String filePath = "./hxData/output/" + date + "/xed/result.csv";
         File fileName = getFile(date, filePath);
         if (fileName == null) {
             return;
         }
+        List<Map<String, Object>> todoList = hyDao.queryForList("hsyh", "common.queryTodoListInfo", yesterday);
+        if(!CommUtils.isEmptyList(todoList)){
+            ListIterator<Map<String, Object>> iterator = todoList.listIterator();
+            String entname = "";
+            String serialno = "";
+            BufferedWriter bufferwriter =
+                    new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()),
+                            StandardCharsets.UTF_8));
+            while (iterator.hasNext()) {
+                try {
+                    Map<String, Object> entInfo = iterator.next();
+                    entname = (String) entInfo.get("nsrmc");
+                    log.info("【检索到需要处理的企业为{}】", entname);
+                    serialno = (String) entInfo.get("serialno");
+                    String nsrsbh = (String) entInfo.get("nsrsbh");
+                    String businessType1 = (String) entInfo.get("businesstype1");
+                    String businessType2 = (String) entInfo.get("businesstype2");
+                    //加工指标
+                    Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh,entInfo);
+                    //处理结果
+                    //非科技e贷
+                    if("1".equals(businessType1)){
+                        Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
+                        //写文件中
+                        writeData(bufferwriter, resultMap, log);
+                    }
+                    if("1".equals(businessType2)){
+                        //入库操作后置  两种结果需要结合
+                        Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
+                        writeDataKjed(bufferwriter, kjedResultMap, log);
+                    }
 
-        ListIterator<Map<String, Object>> iterator = todoList.listIterator();
-        String entname = "";
-        String serialno = "";
-        BufferedWriter bufferwriter =
-                new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toPath()),
-                StandardCharsets.UTF_8));
-        while (iterator.hasNext()) {
-            try {
-                Map<String, Object> entInfo = iterator.next();
-                entname = (String) entInfo.get("nsrmc");
-                log.info("【检索到需要处理的企业为{}】", entname);
-                serialno = (String) entInfo.get("serialno");
-                String nsrsbh = (String) entInfo.get("nsrsbh");
-                String businessType1 = (String) entInfo.get("businesstype1");
-                String businessType2 = (String) entInfo.get("businesstype2");
-                //加工指标
-                Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh,entInfo);
-                //处理结果
-                //非科技e贷
-                if("1".equals(businessType1)){
-                    Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
-                    //写文件中
-                    writeData(bufferwriter, resultMap, log);
+                } catch (Exception e) {
+                    saveExceptionInfo(entname, serialno, e);
+                } finally {
+                    // 关闭流
+                    log.info("企业{}处理完毕!】", entname);
                 }
-                if("1".equals(businessType2)){
-                    //入库操作后置  两种结果需要结合
-                    Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
-                    writeDataKjed(bufferwriter, kjedResultMap, log);
-                }
-
-            } catch (Exception e) {
-                saveExceptionInfo(entname, serialno, e);
-            } finally {
-                // 关闭流
-                log.info("企业{}处理完毕!】", entname);
             }
+            bufferwriter.close();
         }
-        bufferwriter.close();
+
         log.info("文件写入成功");
         String successFlag = "./hxData/output/" + date + "/xed/success.ok";
         File fileSuccess = new File(successFlag);
