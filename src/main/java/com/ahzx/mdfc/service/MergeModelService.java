@@ -18,7 +18,7 @@ import java.nio.file.Files;
 @Service
 public class MergeModelService {
     private final Logger log = LoggerFactory.getLogger(MergeModelService.class);
-    @Scheduled(cron = "${modelCronExpr}")
+    @Scheduled(cron = "${mergemodelCronExpr}")
     public void process() throws IOException {
         long startTime = System.currentTimeMillis();
         log.info("开始处理数据!");
