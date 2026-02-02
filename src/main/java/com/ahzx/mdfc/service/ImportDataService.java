@@ -78,8 +78,20 @@ public class ImportDataService {
 				map.put("xedoldcust", params[6]);
 				map.put("inputtime", CommUtils.getDate());
 				map.put("batchdate", date);
-				map.put("businesstype1", params[8]);
-				map.put("businesstype2", params[9]);
+				String params8 = params[8];
+				//log.info("params[8]值:{}", params8);
+				map.put("businesstype1","Y");
+				if(!CommUtils.isEmptyStr(params8)){
+					//log.info("表达式:{}", params8.equals("1")?"Y":"N");
+					map.put("businesstype1",params8.equals("1")?"Y":"N");
+				}
+				//map.put("businesstype1", params[8]);
+				String params9 = params[9];
+				map.put("businesstype2","N");
+				if(!CommUtils.isEmptyStr(params9)){
+					//log.info("表达式:{}", params9.equals("1")?"Y":"N");
+					map.put("businesstype2",params9.equals("1")?"Y":"N");
+				}
 				requstList.add(map);
 				if(requstList.size()>=100){
 					saveDate(requstList, date);

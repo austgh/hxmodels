@@ -105,7 +105,7 @@
 		from hsyh_qymd a
 		left join hsyh_trans_log b
 		on a.serialno = b.serialno and a.batchdate=b.batchdate
-		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype1='1'
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype1='Y'
 		order by a.inputtime desc
 	</select>
 
@@ -124,7 +124,7 @@
 		from hsyh_qymd a
 				 left join hsyh_trans_log b
 						   on a.serialno = b.serialno and a.batchdate=b.batchdate
-		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype2='1'
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype2='Y'
 		order by a.inputtime desc
 	</select>
 
