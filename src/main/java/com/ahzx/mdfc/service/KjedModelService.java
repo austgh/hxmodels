@@ -74,12 +74,12 @@ public class KjedModelService {
                     Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh,entInfo);
                     //处理结果
                     //非科技e贷
-                    if("1".equals(businessType1)){
+                    if("Y".equals(businessType1)){
                         Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
                         //写文件中
                         writeData(bufferwriter, resultMap, log);
                     }
-                    if("1".equals(businessType2)){
+                    if("Y".equals(businessType2)){
                         //入库操作后置  两种结果需要结合
                         Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
                         writeDataKjed(bufferwriter, kjedResultMap, log);
