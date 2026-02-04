@@ -92,14 +92,15 @@ public class ImportDataService {
 					//log.info("表达式:{}", params9.equals("1")?"Y":"N");
 					map.put("businesstype2",params9.equals("1")?"Y":"N");
 				}
-				requstList.add(map);
-				if(requstList.size()>=100){
-					saveDate(requstList, date);
-				}
+				hyDao.insert("hshy", "common.insertData", map);
+				//requstList.add(map);
+				//if(requstList.size()>=100){
+				//	saveDate(requstList, date);
+				//}
 			}
-			if(!requstList.isEmpty()){
-				saveDate(requstList, date);
-			}
+			//if(!requstList.isEmpty()){
+			//	saveDate(requstList, date);
+			//}
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally {
