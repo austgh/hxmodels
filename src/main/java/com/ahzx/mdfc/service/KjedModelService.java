@@ -68,18 +68,18 @@ public class KjedModelService {
                     log.info("【检索到需要处理的企业为{}】", entname);
                     serialno = (String) entInfo.get("serialno");
                     String nsrsbh = (String) entInfo.get("nsrsbh");
-                    String businessType1 = (String) entInfo.get("businesstype1");
-                    String businessType2 = (String) entInfo.get("businesstype2");
+                    String xed_type = (String) entInfo.get("xed_type");
+                    String kced_type = (String) entInfo.get("kced_type");
                     //加工指标
                     Map<String, Object> modelMap = indexManageModel.hangxinTaxModelData(nsrsbh,entInfo);
                     //处理结果
                     //非科技e贷
-                    if("Y".equals(businessType1)){
+                    if("Y".equals(xed_type)){
                         Map<String, Object> resultMap = getModelRule(modelMap, entInfo,date);
                         //写文件中
                         writeData(bufferwriter, resultMap, log);
                     }
-                    if("Y".equals(businessType2)){
+                    if("Y".equals(kced_type)){
                         //入库操作后置  两种结果需要结合
                         Map<String, Object> kjedResultMap = getKjedModelRule(modelMap, entInfo,date);
                         writeDataKjed(bufferwriter, kjedResultMap, log);

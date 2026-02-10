@@ -381,16 +381,16 @@ CREATE TABLE `hsyh_trans_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='模型结果表';
 
 #by 2025/12/25
-ALTER TABLE hsyh_qymd ADD businesstype1 varchar(10) comment '业务类型 1:信e贷模型';
-#alter table hsyh_qymd modify column businesstype1 varchar(10) comment '业务类型 1:信e贷模型';
-ALTER TABLE hsyh_qymd ALTER COLUMN businesstype1 SET DEFAULT '1';
+ALTER TABLE hsyh_qymd ADD xed_type varchar(10) comment '业务类型 1:信e贷模型';
+#alter table hsyh_qymd modify column xed_type varchar(10) comment '业务类型 1:信e贷模型';
+ALTER TABLE hsyh_qymd ALTER COLUMN xed_type SET DEFAULT 'Y';
 
 
-ALTER TABLE hsyh_qymd ADD businesstype2 varchar(10) comment '业务类型 1:科技e贷模型';
-#alter table hsyh_qymd modify column businesstype2 varchar(10) comment '业务类型 1:科技e贷模型';
-ALTER TABLE hsyh_qymd ALTER COLUMN businesstype2 SET DEFAULT '0';
+ALTER TABLE hsyh_qymd ADD kced_type varchar(10) comment '业务类型 1:科技e贷模型';
+#alter table hsyh_qymd modify column kced_type varchar(10) comment '业务类型 1:科技e贷模型';
+ALTER TABLE hsyh_qymd ALTER COLUMN kced_type SET DEFAULT 'N';
 
-ALTER TABLE hsyh_trans_log ADD businesstype1 varchar(10) comment '业务类型 1:信e贷模型';
-ALTER TABLE hsyh_trans_log ADD businesstype2 varchar(10) comment '业务类型 1:科创e贷模型';
+ALTER TABLE hsyh_trans_log ADD xed_type varchar(10) comment '业务类型 1:信e贷模型';
+ALTER TABLE hsyh_trans_log ADD kced_type varchar(10) comment '业务类型 1:科创e贷模型';
 ALTER TABLE hsyh_trans_log ADD ratio varchar(10) comment '增长率';
 ALTER TABLE hsyh_trans_log ADD saleamount varchar(30) comment '销售收入区间值';

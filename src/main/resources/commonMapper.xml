@@ -31,11 +31,11 @@
 			<if test="batchdate != null and batchdate != ''">
 				batchdate,
 			</if>
-			<if test="businesstype1 != null and businesstype1 != ''">
-				businesstype1,
+			<if test="xed_type != null and xed_type != ''">
+				xed_type,
 			</if>
-			<if test="businesstype2 != null and businesstype2 != ''">
-				businesstype2,
+			<if test="kced_type != null and kced_type != ''">
+				kced_type,
 			</if>
 			<if test="growthRate != null and growthRate != ''">
 				ratio,
@@ -72,11 +72,11 @@
 			<if test="batchdate != null and batchdate != ''">
 				#{batchdate},
 			</if>
-			<if test="businesstype1 != null and businesstype1 != ''">
-				#{businesstype1},
+			<if test="xed_type != null and xed_type != ''">
+				#{xed_type},
 			</if>
-			<if test="businesstype2 != null and businesstype2 != ''">
-				#{businesstype2},
+			<if test="kced_type != null and kced_type != ''">
+				#{kced_type},
 			</if>
 			<if test="growthRate != null and growthRate != ''">
 				#{growthRate},
@@ -99,13 +99,13 @@
 			   a.ifkjedai   as "ifkjedai",
 			   a.hytype     as "hytype",
 			   a.hytypecode as "hytypecode",
-			   a.businesstype1       as "businesstype1",
-			   a.businesstype2       as "businesstype2",
+			   a.xed_type       as "xed_type",
+			   a.kced_type       as "kced_type",
 			   a.xedoldcust as "xedoldcust"
 		from hsyh_qymd a
 		left join hsyh_trans_log b
 		on a.serialno = b.serialno and a.batchdate=b.batchdate
-		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype1='Y'
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.xed_type='Y'
 		order by a.inputtime desc
 	</select>
 
@@ -118,13 +118,13 @@
 			   a.ifkjedai   as "ifkjedai",
 			   a.hytype     as "hytype",
 			   a.hytypecode as "hytypecode",
-			   a.businesstype1       as "businesstype1",
-			   a.businesstype2       as "businesstype2",
+			   a.xed_type       as "xed_type",
+			   a.kced_type       as "kced_type",
 			   a.xedoldcust as "xedoldcust"
 		from hsyh_qymd a
 				 left join hsyh_trans_log b
 						   on a.serialno = b.serialno and a.batchdate=b.batchdate
-		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.businesstype2='Y'
+		where flag = 'Y'  and b.serialno is null and a.batchdate >=#{yesterday} and a.kced_type='Y'
 		order by a.inputtime desc
 	</select>
 
@@ -135,7 +135,7 @@
 
 	<insert id="insertData" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype1,businesstype2)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type)
 		values
 		(	#{serialno},
 			#{nsrmc},
@@ -146,14 +146,14 @@
 			#{xedoldcust},
 			#{batchdate},
 			#{inputtime},
-			#{businesstype1},
-			#{businesstype2}
+			#{xed_type},
+			#{kced_type}
 		)
 	</insert>
 
 	<insert id="insertData1" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,businesstype1,businesstype2)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type)
 		select a.* from
 		(
 		<foreach collection="list" index="index" item="item" separator="union all">
@@ -167,8 +167,8 @@
 			#{item.xedoldcust} as "xedoldcust",
 			#{batchdate} as "batchdate",
 			#{item.inputtime} as "inputtime",
-			#{item.businesstype1} as "businesstype1",
-			#{item.businesstype2} as "businesstype2"
+			#{item.xed_type} as "xed_type",
+			#{item.kced_type} as "kced_type"
 			from dual
 		</foreach>
 		) a
@@ -181,8 +181,8 @@
 			   a.inputtime  as "inputtime",
 			   a.rulecd   	as "rulecd",
 			   a.score     as "score",
-			   a.businesstype1 as "businesstype1",
-			   a.businesstype2 as "businesstype2",
+			   a.xed_type as "xed_type",
+			   a.kced_type as "kced_type",
 			   a.ratio as "ratio",
 			   a.saleamount as "saleamount"
 		from hsyh_trans_log a

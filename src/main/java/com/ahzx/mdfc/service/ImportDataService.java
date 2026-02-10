@@ -80,17 +80,17 @@ public class ImportDataService {
 				map.put("batchdate", date);
 				String params8 = params[8];
 				//log.info("params[8]值:{}", params8);
-				map.put("businesstype1","Y");
+				map.put("xed_type","Y");
 				if(!CommUtils.isEmptyStr(params8)){
 					//log.info("表达式:{}", params8.equals("1")?"Y":"N");
-					map.put("businesstype1",params8.equals("1")?"Y":"N");
+					map.put("xed_type",params8.equals("1")?"Y":"N");
 				}
-				//map.put("businesstype1", params[8]);
+				//map.put("xed_type", params[8]);
 				String params9 = params[9];
-				map.put("businesstype2","N");
+				map.put("kced_type","N");
 				if(!CommUtils.isEmptyStr(params9)){
 					//log.info("表达式:{}", params9.equals("1")?"Y":"N");
-					map.put("businesstype2",params9.equals("1")?"Y":"N");
+					map.put("kced_type",params9.equals("1")?"Y":"N");
 				}
 				hyDao.insert("hshy", "common.insertData", map);
 				//requstList.add(map);
