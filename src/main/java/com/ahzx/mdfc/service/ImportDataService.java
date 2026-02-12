@@ -46,7 +46,11 @@ public class ImportDataService {
 			//log.info("当前日期为:{}下面的文件不存在,文件目录为:{}", date,filePath);
 			return;
 		}
-
+		String successFlag = "./hxData/input/" + date + "/over.csv";
+		File fileSuccess = new File(successFlag);
+		if(!fileSuccess.exists()){
+			return;
+		}
 		int total=0;
 		try {
 			InputStreamReader fReader = new InputStreamReader(Files.newInputStream(inputfile.toPath()),
@@ -96,8 +100,8 @@ public class ImportDataService {
 			//if(!requstList.isEmpty()){
 			//	saveDate(requstList, date);
 			//}
-			String successFlag = "./hxData/input/" + date + "/over.csv";
-			File fileSuccess = new File(successFlag);
+			//String successFlag = "./hxData/input/" + date + "/over.csv";
+			//File fileSuccess = new File(successFlag);
 			if (fileSuccess.createNewFile()) {
 				log.info("over.csv文件创建成功!");
 			}else{
