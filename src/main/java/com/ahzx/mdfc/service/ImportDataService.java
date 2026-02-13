@@ -39,7 +39,7 @@ public class ImportDataService {
 		List<Map<String, Object>> requstList = new ArrayList<>();
 		String date=CommUtils.getDate(0).replace("-","");
 		String filePath="./hxData/input/"+date+"/entname.csv";
-		log.info("当前日期为:{},文件名为:{}", date,filePath);
+		//log.info("当前日期为:{},文件名为:{}", date,filePath);
 		//判断文件是否存在
 		File inputfile = new File(filePath);// 线上审批
 		if(!inputfile.exists()){
@@ -48,7 +48,7 @@ public class ImportDataService {
 		}
 		String successFlag = "./hxData/input/" + date + "/over.csv";
 		File fileSuccess = new File(successFlag);
-		if(!fileSuccess.exists()){
+		if(fileSuccess.exists()){
 			return;
 		}
 		int total=0;

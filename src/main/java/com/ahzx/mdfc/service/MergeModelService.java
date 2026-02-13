@@ -21,7 +21,7 @@ public class MergeModelService {
     @Scheduled(cron = "${mergemodelCronExpr}")
     public void process() throws IOException {
         long startTime = System.currentTimeMillis();
-        log.info("开始处理数据!");
+        //log.info("开始处理数据!");
         String date = CommUtils.getDate(0).replace("-", "");
         String yesterday = CommUtils.getDate(0, 0, -1).replace("-", "");
         if(date.compareTo("20271231")>0){
@@ -97,7 +97,9 @@ public class MergeModelService {
 
         long endTime = System.currentTimeMillis();
         int time = (int) ((endTime - startTime) / 1000);
-        log.info("{}条数据导入共耗时{}秒",lineCount,time);
+        if(lineCount>0){
+            log.info("{}条数据导入共耗时{}秒",lineCount,time);
+        }
     }
 
 }
