@@ -91,15 +91,15 @@ public class ImportDataService {
 					//log.info("表达式:{}", params9.equals("1")?"Y":"N");
 					map.put("kced_type",params9.equals("1")?"Y":"N");
 				}
-				hyDao.insert("hshy", "common.insertData", map);
-				//requstList.add(map);
-				//if(requstList.size()>=100){
-				//	saveDate(requstList, date);
-				//}
+				//hyDao.insert("hshy", "common.insertData", map);
+				requstList.add(map);
+				if(requstList.size()>=100){
+					saveDate(requstList, date);
+				}
 			}
-			//if(!requstList.isEmpty()){
-			//	saveDate(requstList, date);
-			//}
+			if(!requstList.isEmpty()){
+				saveDate(requstList, date);
+			}
 			//String successFlag = "./hxData/input/" + date + "/over.csv";
 			//File fileSuccess = new File(successFlag);
 			if (fileSuccess.createNewFile()) {
