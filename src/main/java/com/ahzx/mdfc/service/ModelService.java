@@ -131,7 +131,7 @@ public class ModelService {
         int score = 0;
         StringBuilder result = new StringBuilder();
         String taxLev = modelMap.get("taxLev") == null ? "" : modelMap.get("taxLev").toString();
-        if (!"A".equals(taxLev) && !"B".equals(taxLev) && !"M".equals(taxLev)) {
+        if (!"A".equals(taxLev) && !"B".equals(taxLev)) {
             result.append("AP26,");
             score += 500;
         }
@@ -396,7 +396,7 @@ public class ModelService {
         int score = 0;
         StringBuilder result = new StringBuilder();
         String taxLev = modelMap.get("taxLev") == null ? "" : modelMap.get("taxLev").toString();
-        if (!"A".equals(taxLev) && !"B".equals(taxLev) && !"M".equals(taxLev)) {
+        if (!"A".equals(taxLev) && !"B".equals(taxLev)) {
             result.append("AP26,");
             score += 500;
         }
