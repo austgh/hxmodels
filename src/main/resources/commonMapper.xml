@@ -236,6 +236,8 @@
 			<if test="tax2YNetAss != null and tax2YNetAss != ''">tax2YNetAss,</if>
 			<if test="befLasYearTax != null and befLasYearTax != ''">befLasYearTax,</if>
 			<if test="lastYearTax != null and lastYearTax != ''">lastYearTax,</if>
+			<if test="cmpmanayear != null and cmpmanayear != ''">cmpmanayear,</if>
+			<if test="legupdnum != null and legupdnum != ''">legupdnum,</if>
 			<if test="inputtime != null and inputtime != ''">inputtime</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -268,6 +270,8 @@
 			<if test="tax2YNetAss != null and tax2YNetAss != ''">#{tax2YNetAss},</if>
 			<if test="befLasYearTax != null and befLasYearTax != ''">#{befLasYearTax},</if>
 			<if test="lastYearTax != null and lastYearTax != ''">#{lastYearTax},</if>
+			<if test="cmpmanayear != null and cmpmanayear != ''">#{cmpmanayear},</if>
+			<if test="legupdnum != null and legupdnum != ''">#{legupdnum},</if>
 			<if test="inputtime != null and inputtime != ''">#{inputtime}</if>
 		</trim>
 	</insert>

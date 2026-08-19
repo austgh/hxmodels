@@ -394,3 +394,13 @@ ALTER TABLE hsyh_trans_log ADD xed_type varchar(10) comment '业务类型 1:信e
 ALTER TABLE hsyh_trans_log ADD kced_type varchar(10) comment '业务类型 1:科创e贷模型';
 ALTER TABLE hsyh_trans_log ADD ratio varchar(10) comment '增长率';
 ALTER TABLE hsyh_trans_log ADD saleamount varchar(30) comment '销售收入区间值';
+
+
+#by 20260819
+ALTER TABLE `hsyh_db`.`hsyh_qymd`
+    ADD COLUMN `cmpmanayear` varchar(255) NULL COMMENT '企业成立年限' AFTER `kced_type`,
+ADD COLUMN `legupdnum` varchar(255) NOT NULL COMMENT '近1年法定代表人变更次数' AFTER `cmpmanayear`;
+
+ALTER TABLE `hsyh_db`.`hsyh_dcm_trans_log`
+    ADD COLUMN `cmpmanayear` varchar(255) NULL COMMENT '企业成立年限' AFTER `inputtime`,
+ADD COLUMN `legupdnum` varchar(255) NOT NULL COMMENT '近1年法定代表人变更次数' AFTER `cmpmanayear`;
