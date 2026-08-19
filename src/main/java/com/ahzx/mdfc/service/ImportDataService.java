@@ -91,6 +91,8 @@ public class ImportDataService {
 					//log.info("表达式:{}", params9.equals("1")?"Y":"N");
 					map.put("kced_type",params9.equals("1")?"Y":"N");
 				}
+				map.put("cmpmanayear",params[10]);
+				map.put("legupdnum",params[11]);
 				//hyDao.insert("hshy", "common.insertData", map);
 				requstList.add(map);
 				if(requstList.size()>=100){

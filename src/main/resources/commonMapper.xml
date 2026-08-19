@@ -101,7 +101,9 @@
 			   a.hytypecode as "hytypecode",
 			   a.xed_type       as "xed_type",
 			   a.kced_type       as "kced_type",
-			   a.xedoldcust as "xedoldcust"
+			   a.xedoldcust as "xedoldcust",
+			   a.cmpmanayear as "cmpmanayear",
+			   a.legupdnum as "legupdnum"
 		from hsyh_qymd a
 		left join hsyh_trans_log b
 		on a.serialno = b.serialno and a.batchdate=b.batchdate
@@ -120,7 +122,9 @@
 			   a.hytypecode as "hytypecode",
 			   a.xed_type       as "xed_type",
 			   a.kced_type       as "kced_type",
-			   a.xedoldcust as "xedoldcust"
+			   a.xedoldcust as "xedoldcust",
+			   a.cmpmanayear as "cmpmanayear",
+			   a.legupdnum as "legupdnum"
 		from hsyh_qymd a
 				 left join hsyh_trans_log b
 						   on a.serialno = b.serialno and a.batchdate=b.batchdate
@@ -135,7 +139,7 @@
 
 	<insert id="insertData" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type,cmpmanayear,legupdnum)
 		values
 		(	#{serialno},
 			#{nsrmc},
@@ -147,13 +151,15 @@
 			#{batchdate},
 			#{inputtime},
 			#{xed_type},
-			#{kced_type}
+			#{kced_type},
+			#{cmpmanayear},
+			#{legupdnum}
 		)
 	</insert>
 
 	<insert id="insertData1" parameterType="map">
 		insert into hsyh_qymd
-		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type)
+		(serialno,nsrmc,nsrsbh,ifkjedai,hytype,hytypecode,xedoldcust,batchdate,inputtime,xed_type,kced_type,cmpmanayear,legupdnum)
 		select a.* from
 		(
 		<foreach collection="list" index="index" item="item" separator="union all">
@@ -168,7 +174,9 @@
 			#{batchdate} as "batchdate",
 			#{item.inputtime} as "inputtime",
 			#{item.xed_type} as "xed_type",
-			#{item.kced_type} as "kced_type"
+			#{item.kced_type} as "kced_type",
+			#{item.cmpmanayear} as "cmpmanayear",
+			#{item.legupdnum} as "legupdnum"
 			from dual
 		</foreach>
 		) a

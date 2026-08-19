@@ -135,7 +135,15 @@ public class ModelService {
             result.append("AP26,");
             score += 500;
         }
-
+        /*
+        新客户，申请企业成立年限5年以内（cmpmanayear<60）,近1年法定代表人变更（legupdnum>0）,且纳税信用等级不为A（TAXLEV^='A'），直接拒绝
+         */
+        int cmpmanayear= (int) entInfo.get("cmpmanayear");
+        int legupdnum= (int) entInfo.get("legupdnum");
+        if("N".equals(xedoldcust)&&cmpmanayear<60&&legupdnum>0&&!"A".equals(taxLev)){
+            result.append("APXX,");//TODO 除非规则暂定
+            score += 500;
+        }
         String taxNsrlx = modelMap.get("taxnsrlx") == null ? "N" : modelMap.get("taxnsrlx").toString();
         if ("Y".equals(taxNsrlx)) {
             result.append("BL69,");
@@ -398,6 +406,15 @@ public class ModelService {
         String taxLev = modelMap.get("taxLev") == null ? "" : modelMap.get("taxLev").toString();
         if (!"A".equals(taxLev) && !"B".equals(taxLev)) {
             result.append("AP26,");
+            score += 500;
+        }
+                /*
+        新客户，申请企业成立年限5年以内（cmpmanayear<60）,近1年法定代表人变更（legupdnum>0）,且纳税信用等级不为A（TAXLEV^='A'），直接拒绝
+         */
+        int cmpmanayear= (int) entInfo.get("cmpmanayear");
+        int legupdnum= (int) entInfo.get("legupdnum");
+        if("N".equals(xedoldcust)&&cmpmanayear<60&&legupdnum>0&&!"A".equals(taxLev)){
+            result.append("APXX,");//TODO 除非规则暂定
             score += 500;
         }
         /*
